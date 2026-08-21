@@ -8,6 +8,9 @@ backend:
   name: github
   repo: kqyukimura/yuki
   branch: main
+  # 只保留令牌登录。OAuth 登录默认会去请求 Netlify 的中转服务，
+  # 本站没在 Netlify 注册，点了必然报 Not Found。
+  auth_methods: [token]
   # 每次保存直接提交到 main，触发自动部署
   commit_messages:
     create: '内容: 新增 {{collection}} 「{{slug}}」'

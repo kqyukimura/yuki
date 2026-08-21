@@ -1,0 +1,39 @@
+---
+import type { Work, WorkStats } from '../lib/works';
+import { formatWords } from '../lib/works';
+import { url } from '../lib/url';
+
+interface Props {
+	work: Work;
+	stats: WorkStats;
+	/** 列表卡片里链接会嵌套报错，所以卡片上传 false */
+	linked?: boolean;
+}
+
+const { work, stats, linked = true } = Astro.props;
+const { fandom, relationships, rating, status } = work.data;
+const Tag = linked ? 'a' : 'span';
+---
+
+<ul class="meta-row">
+	<li><span class="badge is-accent">{rating}</span></li>
+	<li><span class="badge">{status}</span></li>
+	{
+		fandom.map((f) => (
+			<li>
+				<Tag
+					class="badge"
+					href={linked ? url(`/fandoms/${encodeURIComponent(f)}/`) : undefined}
+				>
+					{f}
+				</Tag>
+			</li>
+		))
+	}
+	{relationships.map((cp) => <li><span class="badge">{cp}</span></li>)}
+	<li>
+		<span class="dim">
+			{stats.isOneshot ? '短篇' : `共 ${stats.chapterCount} 章`} · {formatWords(stats.wordCount)}
+		</span>
+	</li>
+</ul>

@@ -1,0 +1,83 @@
+---
+import type { Chapter } from '../lib/works';
+import { chapterSlugOf } from '../lib/works';
+import { url } from '../lib/url';
+
+interface Props {
+	workId: string;
+	prev?: Chapter;
+	next?: Chapter;
+}
+const { workId, prev, next } = Astro.props;
+---
+
+<nav class="chapter-nav">
+	<div class="side">
+		{
+			prev && (
+				<a href={url(`/works/${workId}/${chapterSlugOf(prev)}/`)}>
+					<span class="dim">← 上一章</span>
+					<span class="t">{prev.data.title}</span>
+				</a>
+			)
+		}
+	</div>
+	<a class="toc" href={url(`/works/${workId}/`)}>目录</a>
+	<div class="side right">
+		{
+			next && (
+				<a href={url(`/works/${workId}/${chapterSlugOf(next)}/`)}>
+					<span class="dim">下一章 →</span>
+					<span class="t">{next.data.title}</span>
+				</a>
+			)
+		}
+	</div>
+</nav>
+
+<style>
+	.chapter-nav {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
+	}
+	.side {
+		flex: 1;
+		min-width: 0;
+	}
+	.side.right {
+		text-align: right;
+	}
+	.side a {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+		text-decoration: none;
+	}
+	.side .t {
+		color: var(--text);
+		font-size: 0.95rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.side a:hover .t {
+		color: var(--accent);
+	}
+	.toc {
+		flex: 0 0 auto;
+		padding: 0.35em 0.9em;
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		font-size: 0.875rem;
+		text-decoration: none;
+		color: var(--text-muted);
+	}
+	.toc:hover {
+		border-color: var(--accent);
+		color: var(--accent);
+	}
+</style>

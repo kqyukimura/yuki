@@ -1,0 +1,53 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+import WorkCard from '../../components/WorkCard.astro';
+import { getWorksWithStats, getFandomCounts } from '../../lib/works';
+import { formatWords } from '../../lib/works';
+
+const works = await getWorksWithStats();
+const fandoms = await getFandomCounts();
+const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
+---
+
+<Base title="作品" description="全部同人作品归档">
+	<h1>作品</h1>
+	<p class="dim intro">
+		共 {works.length} 篇 · {formatWords(totalWords)}
+	</p>
+
+	{
+		fandoms.length > 1 && (
+			<ul class="meta-row filters">
+				{fandoms.map((f) => (
+					<li>
+						<a class="badge" href={url(`/fandoms/${encodeURIComponent(f.fandom)}/`)}>
+							{f.fandom} <span class="dim">{f.count}</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
+
+	{
+		works.length === 0 ? (
+			<p class="dim">还没有作品。在 <code>src/content/works/</code> 下建一个文件夹就能发布第一篇。</p>
+		) : (
+			<ul class="stack">
+				{works.map((work) => (
+					<WorkCard work={work} />
+				))}
+			</ul>
+		)
+	}
+</Base>
+
+<style>
+	.intro {
+		margin-top: -0.5rem;
+	}
+	.filters {
+		margin: 1.5rem 0 2rem;
+	}
+</style>

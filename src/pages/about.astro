@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { AUTHOR } from '../consts';
+---
+
+<Base title="关于" description="关于这个站和写它的人" reading>
+	<h1>关于</h1>
+
+	<div class="prose">
+		<p class="no-indent">
+			这里是 {AUTHOR} 的自留地，用来存放我写的同人和随笔。
+		</p>
+		<p>
+			（把这段换成你自己的介绍：你写什么圈子、更新频率、能不能转载、想不想收到读者来信。
+			这个页面在 <code>src/pages/about.astro</code>。）
+		</p>
+
+		<h2>转载与二次创作</h2>
+		<p>
+			（写清楚你的授权态度，比如：转载请注明出处并附原链接；欢迎在此基础上进行二次创作，
+			但请勿用于任何商业用途。）
+		</p>
+
+		<h2>联系</h2>
+		<p>
+			（留邮箱或社交账号。填好后记得同时更新 <code>src/consts.ts</code> 里的 <code>SOCIAL</code>，
+			页脚就会出现对应链接。）
+		</p>
+	</div>
+</Base>

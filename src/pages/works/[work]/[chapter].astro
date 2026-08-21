@@ -1,0 +1,83 @@
+---
+import { render } from 'astro:content';
+import { url } from '../../../lib/url';
+import Base from '../../../layouts/Base.astro';
+import ChapterNav from '../../../components/ChapterNav.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import { getWorks, getChaptersOf, chapterSlugOf, countWords, formatWords } from '../../../lib/works';
+
+export async function getStaticPaths() {
+	const works = await getWorks();
+	const paths = [];
+	for (const work of works) {
+		const chapters = await getChaptersOf(work.id);
+		chapters.forEach((chapter, i) => {
+			paths.push({
+				params: { work: work.id, chapter: chapterSlugOf(chapter) },
+				props: {
+					work,
+					chapter,
+					prev: chapters[i - 1],
+					next: chapters[i + 1],
+					total: chapters.length,
+				},
+			});
+		});
+	}
+	return paths;
+}
+
+const { work, chapter, prev, next, total } = Astro.props;
+const { Content } = await render(chapter);
+---
+
+<Base
+	title={`${chapter.data.title} · ${work.data.title}`}
+	description={chapter.data.summary ?? work.data.summary}
+	type="article"
+	reading
+>
+	<article>
+		<header class="head">
+			<a class="up dim" href={url(`/works/${work.id}/`)}>‹ {work.data.title}</a>
+			<h1>{chapter.data.title}</h1>
+			<p class="dim">
+				第 {chapter.data.order} / {total} 章 · {formatWords(countWords(chapter.body))}{' · '}
+				<FormattedDate date={chapter.data.pubDate} />
+			</p>
+		</header>
+
+		{chapter.data.summary && <p class="note">{chapter.data.summary}</p>}
+
+		<div class="prose">
+			<Content />
+		</div>
+
+		<ChapterNav workId={work.id} prev={prev} next={next} />
+	</article>
+</Base>
+
+<style>
+	.head {
+		margin-bottom: 2rem;
+	}
+	.up {
+		display: inline-block;
+		margin-bottom: 0.75rem;
+		text-decoration: none;
+	}
+	.up:hover {
+		color: var(--accent);
+	}
+	.head h1 {
+		margin-bottom: 0.4rem;
+	}
+	.note {
+		padding: 0.85rem 1.1rem;
+		margin-bottom: 2rem;
+		border-radius: 10px;
+		background: var(--bg-soft);
+		color: var(--text-muted);
+		font-size: 0.925rem;
+	}
+</style>

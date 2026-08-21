@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { getWorksWithStats, getFandomCounts, formatWords } from '../../lib/works';
+
+export async function getStaticPaths() {
+	const [fandoms, works] = await Promise.all([getFandomCounts(), getWorksWithStats()]);
+	return fandoms.map(({ fandom }) => ({
+		params: { fandom },
+		props: {
+			fandom,
+			works: works.filter((w) => w.data.fandom.includes(fandom)),
+		},
+	}));
+}
+
+const { fandom, works } = Astro.props;
+const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
+---
+
+<Base title={fandom} description={`${fandom} 圈子下的 ${works.length} 篇同人作品`}>
+	<h1>{fandom}</h1>
+	<p class="dim intro">{works.length} 篇 · {formatWords(totalWords)}</p>
+
+	<ul class="stack">
+		{works.map((work) => <WorkCard work={work} />)}
+	</ul>
+</Base>
+
+<style>
+	.intro {
+		margin-top: -0.5rem;
+		margin-bottom: 2rem;
+	}
+</style>

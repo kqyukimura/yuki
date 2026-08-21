@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { url } from '../../lib/url';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getEssays } from '../../lib/works';
+
+const essays = await getEssays();
+---
+
+<Base title="随笔" description="杂谈、创作手记与其他文字">
+	<h1>随笔</h1>
+	<p class="dim intro">共 {essays.length} 篇</p>
+
+	{
+		essays.length === 0 ? (
+			<p class="dim">还没有随笔。在 <code>src/content/essays/</code> 下新建 md 文件即可。</p>
+		) : (
+			<ul class="stack">
+				{essays.map((e) => (
+					<li>
+						<a class="card" href={url(`/essays/${e.id}/`)}>
+							<h3>{e.data.title}</h3>
+							<p class="dim date">
+								<FormattedDate date={e.data.pubDate} />
+							</p>
+							<p>{e.data.description}</p>
+						</a>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</Base>
+
+<style>
+	.intro {
+		margin-top: -0.5rem;
+		margin-bottom: 2rem;
+	}
+	.date {
+		margin: 0;
+		font-size: 0.8rem;
+	}
+</style>

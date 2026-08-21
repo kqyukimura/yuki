@@ -1,0 +1,141 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/url';
+import WorkCard from '../components/WorkCard.astro';
+import FormattedDate from '../components/FormattedDate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getWorksWithStats, getEssays, getTagCounts } from '../lib/works';
+
+const all = await getWorksWithStats();
+// 置顶的排前面，其余按时间倒序（getWorksWithStats 已排好序）
+const works = [...all].sort((a, b) => Number(b.data.featured) - Number(a.data.featured)).slice(0, 5);
+const essays = (await getEssays()).slice(0, 4);
+const tags = (await getTagCounts()).slice(0, 20);
+---
+
+<Base title={SITE_TITLE} description={SITE_DESCRIPTION}>
+	<section class="hero">
+		<h1>{SITE_TITLE}</h1>
+		<p>{SITE_DESCRIPTION}</p>
+	</section>
+
+	<section>
+		<div class="sec-head">
+			<h2>作品</h2>
+			{all.length > works.length && <a class="more" href={url('/works/')}>全部 {all.length} 篇 →</a>}
+		</div>
+		{
+			works.length === 0 ? (
+				<p class="dim">
+					还没有作品。复制 <code>src/content/works/</code> 里的示例文件夹，改成你自己的就行。
+				</p>
+			) : (
+				<ul class="stack">
+					{works.map((work) => (
+						<WorkCard work={work} />
+					))}
+				</ul>
+			)
+		}
+	</section>
+
+	{
+		essays.length > 0 && (
+			<section>
+				<div class="sec-head">
+					<h2>随笔</h2>
+					<a class="more" href={url('/essays/')}>
+						全部 →
+					</a>
+				</div>
+				<ul class="stack tight">
+					{essays.map((e) => (
+						<li>
+							<a class="row" href={url(`/essays/${e.id}/`)}>
+								<span class="rt">{e.data.title}</span>
+								<span class="dim">
+									<FormattedDate date={e.data.pubDate} />
+								</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+
+	{
+		tags.length > 0 && (
+			<section>
+				<h2>标签</h2>
+				<ul class="meta-row">
+					{tags.map((t) => (
+						<li>
+							<a class="badge" href={url(`/tags/${encodeURIComponent(t.tag)}/`)}>
+								# {t.tag} <span class="dim">{t.count}</span>
+							</a>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</Base>
+
+<style>
+	.hero {
+		padding: 1rem 0 3rem;
+	}
+	.hero h1 {
+		font-size: 2.2rem;
+		margin-bottom: 0.3rem;
+	}
+	.hero p {
+		margin: 0;
+		color: var(--text-muted);
+		font-size: 1.05rem;
+	}
+	section {
+		margin-bottom: 3.5rem;
+	}
+	.sec-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+	.sec-head h2 {
+		margin-top: 0;
+	}
+	.more {
+		font-size: 0.875rem;
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.stack.tight {
+		gap: 0;
+	}
+	.row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.7rem 0.25rem;
+		border-bottom: 1px solid var(--border);
+		text-decoration: none;
+	}
+	.rt {
+		color: var(--text);
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.row:hover .rt {
+		color: var(--accent);
+	}
+	.row .dim {
+		flex: 0 0 auto;
+		font-size: 0.8rem;
+	}
+</style>

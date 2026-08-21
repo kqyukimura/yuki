@@ -1,0 +1,172 @@
+---
+import { render } from 'astro:content';
+import { url } from '../../../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../../../layouts/Base.astro';
+import WorkMeta from '../../../components/WorkMeta.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import {
+	getWorks,
+	getChaptersOf,
+	getStats,
+	chapterSlugOf,
+	countWords,
+	formatWords,
+} from '../../../lib/works';
+
+export async function getStaticPaths() {
+	const works = await getWorks();
+	return Promise.all(
+		works.map(async (work) => ({
+			params: { work: work.id },
+			props: {
+				work,
+				chapters: await getChaptersOf(work.id),
+				stats: await getStats(work),
+			},
+		})),
+	);
+}
+
+const { work, chapters, stats } = Astro.props;
+const { Content } = await render(work);
+const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work.data;
+---
+
+<Base title={title} description={summary} image={heroImage} type="article" reading={stats.isOneshot}>
+	<article>
+		<header class="head">
+			<h1>{title}</h1>
+			<WorkMeta work={work} stats={stats} />
+			<p class="dim">
+				发布于 <FormattedDate date={pubDate} />
+				{updatedDate && <> · 最后更新 <FormattedDate date={updatedDate} /></>}
+			</p>
+		</header>
+
+		{heroImage && <Image class="hero" src={heroImage} alt="" width={960} />}
+
+		{
+			warnings.length > 0 && (
+				<aside class="warnings">
+					<strong>阅读预警</strong>
+					<ul class="meta-row">
+						{warnings.map((w) => (
+							<li>
+								<span class="badge is-warn">{w}</span>
+							</li>
+						))}
+					</ul>
+				</aside>
+			)
+		}
+
+		<p class="summary">{summary}</p>
+
+		{/* 短篇：index.md 的正文就是作品本身。长篇：这里是前言/说明 */}
+		<div class="prose">
+			<Content />
+		</div>
+
+		{
+			!stats.isOneshot && (
+				<section class="toc">
+					<h2>目录</h2>
+					<ol class="stack">
+						{chapters.map((c) => (
+							<li>
+								<a class="card chapter" href={url(`/works/${work.id}/${chapterSlugOf(c)}/`)}>
+									<span class="num">第 {c.data.order} 章</span>
+									<span class="ct">{c.data.title}</span>
+									<span class="dim wc">{formatWords(countWords(c.body))}</span>
+								</a>
+							</li>
+						))}
+					</ol>
+				</section>
+			)
+		}
+
+		{
+			tags.length > 0 && (
+				<footer class="tags">
+					<ul class="meta-row">
+						{tags.map((t) => (
+							<li>
+								<a class="badge" href={url(`/tags/${encodeURIComponent(t)}/`)}>
+									# {t}
+								</a>
+							</li>
+						))}
+					</ul>
+				</footer>
+			)
+		}
+	</article>
+</Base>
+
+<style>
+	.head {
+		margin-bottom: 2rem;
+	}
+	.hero {
+		width: 100%;
+		height: auto;
+		border-radius: 12px;
+		margin-bottom: 2rem;
+	}
+	.warnings {
+		padding: 1rem 1.25rem;
+		margin-bottom: 1.5rem;
+		border: 1px solid var(--accent);
+		border-radius: 10px;
+		background: var(--accent-soft);
+	}
+	.warnings strong {
+		display: block;
+		margin-bottom: 0.5rem;
+		font-size: 0.9rem;
+		color: var(--accent);
+	}
+	.warnings .meta-row {
+		margin: 0;
+	}
+	.summary {
+		margin: 0 0 2rem;
+		padding-left: 1rem;
+		border-left: 3px solid var(--border);
+		color: var(--text-muted);
+	}
+	.toc {
+		margin-top: 3rem;
+	}
+	.chapter {
+		display: flex;
+		align-items: baseline;
+		gap: 0.9rem;
+		padding: 0.85rem 1.1rem;
+	}
+	.num {
+		flex: 0 0 auto;
+		font-size: 0.8rem;
+		color: var(--text-faint);
+		font-variant-numeric: tabular-nums;
+	}
+	.ct {
+		flex: 1;
+		min-width: 0;
+		color: var(--text);
+	}
+	.wc {
+		flex: 0 0 auto;
+		font-size: 0.8rem;
+	}
+	.tags {
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
+	}
+	ol.stack {
+		counter-reset: none;
+	}
+</style>

@@ -1,4 +1,7 @@
 ---
+type: chapter
+slug: 01-departure
+work: example-longfic
 title: 第一章　启程
 order: 1
 pubDate: 2026-07-10

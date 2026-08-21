@@ -1,4 +1,6 @@
 ---
+type: work
+slug: example-longfic
 title: 示例长篇：候鸟
 summary: 一个多章节作品的示例。有 chapters 文件夹，所以这一页会自动变成「简介 + 目录」。
 pubDate: 2026-07-10

@@ -22,6 +22,10 @@ const works = defineCollection({
 	}),
 	schema: ({ image }) =>
 		z.object({
+			/** CMS 用来区分作品与章节的标记，本地手写时可省略 */
+			type: z.literal('work').optional(),
+			/** 文件夹名，同时决定网址。CMS 用它建目录；本地手写时可省略 */
+			slug: z.string().optional(),
 			title: z.string(),
 			/** 简介，会显示在列表卡片和作品页 */
 			summary: z.string(),
@@ -56,6 +60,12 @@ const chapters = defineCollection({
 			entry.replace(/\.mdx?$/, '').replace('/chapters/', '/'),
 	}),
 	schema: z.object({
+		/** CMS 用来区分作品与章节的标记 */
+		type: z.literal('chapter').optional(),
+		/** 文件名，同时决定网址。CMS 用它命名章节文件 */
+		slug: z.string().optional(),
+		/** 所属作品的 slug，CMS 用它决定章节存到哪个文件夹 */
+		work: z.string().optional(),
 		title: z.string(),
 		/** 章节顺序，决定目录排序和上下章导航 */
 		order: z.number(),
@@ -71,6 +81,8 @@ const essays = defineCollection({
 	loader: glob({ base: './src/content/essays', pattern: '**/*.{md,mdx}' }),
 	schema: ({ image }) =>
 		z.object({
+			/** 文件名，同时决定网址。CMS 用它命名文件；本地手写时可省略 */
+			slug: z.string().optional(),
 			title: z.string(),
 			description: z.string(),
 			pubDate: z.coerce.date(),

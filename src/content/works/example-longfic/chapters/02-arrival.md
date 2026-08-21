@@ -1,4 +1,7 @@
 ---
+type: chapter
+slug: 02-arrival
+work: example-longfic
 title: 第二章　抵达
 order: 2
 pubDate: 2026-08-15

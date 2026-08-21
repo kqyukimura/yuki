@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- 后台页面不需要被搜索引擎收录 -->
+		<meta name="robots" content="noindex, nofollow" />
+		<title>内容管理 · yuki</title>
+		<!--
+			显式指定配置文件位置。站点部署在 /yuki 子路径下，
+			默认的 /admin/config.yml 会指错地方，所以用相对路径。
+		-->
+		<link href="./config.yml" type="text/yaml" rel="cms-config-url" />
+	</head>
+	<body>
+		<!-- jsDelivr 在国内比 unpkg 稳定 -->
+		<script src="https://cdn.jsdelivr.net/npm/@sveltia/cms/dist/sveltia-cms.js"></script>
+	</body>
+</html>

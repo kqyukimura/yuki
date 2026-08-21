@@ -1,0 +1,206 @@
+# ═══════════════════════════════════════════════════════════
+# Sveltia CMS 配置
+# 后台地址：https://kqyukimura.github.io/yuki/admin/
+# 登录方式：点 "Sign In with Token"，用 GitHub fine-grained PAT
+# ═══════════════════════════════════════════════════════════
+
+backend:
+  name: github
+  repo: kqyukimura/yuki
+  branch: main
+  # 每次保存直接提交到 main，触发自动部署
+  commit_messages:
+    create: '内容: 新增 {{collection}} 「{{slug}}」'
+    update: '内容: 更新 {{collection}} 「{{slug}}」'
+    delete: '内容: 删除 {{collection}} 「{{slug}}」'
+    uploadMedia: '内容: 上传图片 {{path}}'
+    deleteMedia: '内容: 删除图片 {{path}}'
+
+site_url: https://kqyukimura.github.io/yuki
+display_url: https://kqyukimura.github.io/yuki
+
+# 兜底的媒体位置；下面每个 collection 都覆盖成「和文章同目录」，
+# 这样 Astro 的 image() 才能按相对路径解析并做优化。
+media_folder: public/media
+public_folder: /yuki/media
+
+collections:
+  # ── 作品 ──────────────────────────────────────────────
+  - name: works
+    label: 作品
+    label_singular: 作品
+    description: 同人作品。短篇直接把正文写在下面；长篇把正文留空或写前言，再去「章节」里逐章添加。
+    folder: src/content/works
+    # 每个作品是一个文件夹，元信息和短篇正文都在 index.md
+    path: '{{fields.slug}}/index'
+    # 图片和 index.md 放同一个文件夹，frontmatter 里就是裸文件名
+    media_folder: ''
+    public_folder: ''
+    create: true
+    # 只列出作品，把同目录下的章节文件排除掉
+    filter: { field: type, value: work }
+    sortable_fields: [pubDate, updatedDate, title]
+    view_groups:
+      - { label: 按状态, field: status }
+      - { label: 按分级, field: rating }
+    fields:
+      # 隐藏字段，用来和章节区分，你在界面上看不到它
+      - { label: 类型, name: type, widget: hidden, default: work }
+      - label: 网址名
+        name: slug
+        widget: string
+        hint: 作为文件夹名和网址，只能用小写英文字母、数字和连字符，例如 rain-stops。建好后不要再改，否则旧链接会失效。
+        pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', '只能用小写字母、数字和连字符']
+      - { label: 标题, name: title, widget: string }
+      - label: 简介
+        name: summary
+        widget: text
+        hint: 显示在作品列表卡片和作品页顶部
+      - label: 发布日期
+        name: pubDate
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+      - label: 更新日期
+        name: updatedDate
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        required: false
+        hint: 长篇更新章节后填这里
+      - label: 圈子
+        name: fandom
+        widget: list
+        hint: 可以填多个，会自动生成圈子归档页
+      - label: CP
+        name: relationships
+        widget: list
+        required: false
+        hint: 习惯写法如 甲/乙 或 丙×丁
+      - { label: 主要角色, name: characters, widget: list, required: false }
+      - label: 分级
+        name: rating
+        widget: select
+        options: [全年龄, 青少年向, 成人向]
+        default: 全年龄
+      - label: 预警 / CW
+        name: warnings
+        widget: list
+        required: false
+        hint: 填了会在正文前用醒目色块提示读者
+      - label: 状态
+        name: status
+        widget: select
+        options: [连载中, 已完结, 暂停]
+        default: 已完结
+      - label: 标签
+        name: tags
+        widget: list
+        required: false
+        hint: 会自动生成标签归档页
+      - { label: 封面图, name: heroImage, widget: image, required: false }
+      - label: 首页置顶
+        name: featured
+        widget: boolean
+        default: false
+        required: false
+      - label: 草稿
+        name: draft
+        widget: boolean
+        default: false
+        required: false
+        hint: 勾上就不会发布到线上
+      - label: 正文 / 前言
+        name: body
+        widget: markdown
+        required: false
+        hint: 短篇写正文；长篇写前言或避雷说明，留空也行。单独一行写 *** 会渲染成场景分隔线。
+
+  # ── 章节 ──────────────────────────────────────────────
+  - name: chapters
+    label: 章节
+    label_singular: 章节
+    description: 长篇作品的章节。先在「作品」里建好作品，再来这里逐章添加。
+    folder: src/content/works
+    path: '{{work}}/chapters/{{fields.slug}}'
+    media_folder: ''
+    public_folder: ''
+    create: true
+    # 只列出章节，把作品的 index.md 排除掉
+    filter: { field: type, value: chapter }
+    sortable_fields: [order, pubDate]
+    fields:
+      # 隐藏字段，用来和作品区分
+      - { label: 类型, name: type, widget: hidden, default: chapter }
+      - label: 所属作品
+        name: work
+        widget: relation
+        collection: works
+        value_field: slug
+        display_fields: [title]
+        search_fields: [title]
+        hint: 从已有作品里选
+      - label: 网址名
+        name: slug
+        widget: string
+        hint: 章节文件名，只能用小写英文字母、数字和连字符，例如 01-departure
+        pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', '只能用小写字母、数字和连字符']
+      - { label: 章节标题, name: title, widget: string }
+      - label: 章节序号
+        name: order
+        widget: number
+        value_type: int
+        min: 1
+        hint: 决定目录排序和上下章导航，和文件名无关。插入新章节时改这个数字即可。
+      - label: 发布日期
+        name: pubDate
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+      - label: 章节前注
+        name: summary
+        widget: text
+        required: false
+        hint: 显示在正文上方的灰色方框里，不填就不显示
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 正文, name: body, widget: markdown }
+
+  # ── 随笔 ──────────────────────────────────────────────
+  - name: essays
+    label: 随笔
+    label_singular: 随笔
+    description: 杂谈、创作手记与其他文字
+    folder: src/content/essays
+    path: '{{fields.slug}}'
+    media_folder: ''
+    public_folder: ''
+    create: true
+    sortable_fields: [pubDate, title]
+    fields:
+      - label: 网址名
+        name: slug
+        widget: string
+        hint: 作为文件名和网址，只能用小写英文字母、数字和连字符
+        pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', '只能用小写字母、数字和连字符']
+      - { label: 标题, name: title, widget: string }
+      - { label: 摘要, name: description, widget: text }
+      - label: 发布日期
+        name: pubDate
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+      - label: 更新日期
+        name: updatedDate
+        widget: datetime
+        format: 'YYYY-MM-DD'
+        date_format: 'YYYY-MM-DD'
+        time_format: false
+        required: false
+      - { label: 标签, name: tags, widget: list, required: false }
+      - { label: 封面图, name: heroImage, widget: image, required: false }
+      - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
+      - { label: 正文, name: body, widget: markdown }

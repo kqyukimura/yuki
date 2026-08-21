@@ -1,4 +1,5 @@
 ---
+slug: hello
 title: 开张
 description: 关于这个站为什么存在，以及我打算怎么用它。
 pubDate: 2026-08-21

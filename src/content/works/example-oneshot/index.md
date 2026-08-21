@@ -1,4 +1,6 @@
 ---
+type: work
+slug: example-oneshot
 title: 示例短篇：雨停之前
 summary: 一个短篇的示例。没有 chapters 文件夹，所以这个文件的正文就是作品本身。
 pubDate: 2026-08-01

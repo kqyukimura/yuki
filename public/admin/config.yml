@@ -207,3 +207,57 @@ collections:
       - { label: 封面图, name: heroImage, widget: image, required: false }
       - { label: 草稿, name: draft, widget: boolean, default: false, required: false }
       - { label: 正文, name: body, widget: markdown }
+
+  # ── 页面 ──────────────────────────────────────────────
+  # files 型栏目：条目是固定的，只能编辑不能新增/删除
+  - name: pages
+    label: 页面
+    label_singular: 页面
+    description: 关于页这类固定页面
+    media_folder: ''
+    public_folder: ''
+    files:
+      - name: about
+        label: 关于
+        file: src/content/pages/about.md
+        fields:
+          - { label: 标题, name: title, widget: string }
+          - label: 页面描述
+            name: description
+            widget: string
+            required: false
+            hint: 给搜索引擎和分享卡片看的一句话摘要
+          - { label: 正文, name: body, widget: markdown }
+
+  # ── 站点设置 ──────────────────────────────────────────
+  - name: settings
+    label: 站点设置
+    label_singular: 站点设置
+    description: 站名、简介、笔名和联系方式
+    files:
+      - name: site
+        label: 基本信息
+        file: src/data/site.json
+        fields:
+          - { label: 站名, name: title, widget: string, hint: 显示在页头和浏览器标签 }
+          - label: 站点简介
+            name: description
+            widget: text
+            hint: 用于首页副标题、RSS 和搜索结果摘要
+          - label: 首页大标题文字
+            name: quote
+            widget: string
+            required: false
+            hint: 首页那句渐变大字。留空就显示站名
+          - { label: 笔名, name: author, widget: string, hint: 显示在页脚 }
+          - label: 联系方式
+            name: social
+            widget: list
+            required: false
+            label_singular: 一条链接
+            fields:
+              - { label: 显示名, name: label, widget: string, hint: 例如 GitHub、微博、邮箱 }
+              - label: 链接
+                name: href
+                widget: string
+                hint: 完整网址；邮箱写成 mailto:you@example.com

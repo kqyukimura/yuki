@@ -93,4 +93,13 @@ const essays = defineCollection({
 		}),
 });
 
-export const collections = { works, chapters, essays };
+/** 单页内容（关于页等），由 CMS 后台的「页面」栏目管理 */
+const pages = defineCollection({
+	loader: glob({ base: './src/content/pages', pattern: '**/*.{md,mdx}' }),
+	schema: z.object({
+		title: z.string(),
+		description: z.string().default(''),
+	}),
+});
+
+export const collections = { works, chapters, essays, pages };

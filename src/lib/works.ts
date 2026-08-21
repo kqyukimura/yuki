@@ -110,3 +110,18 @@ export async function getFandomCounts(): Promise<{ fandom: string; count: number
 	return [...counts.entries()].map(([fandom, count]) => ({ fandom, count }))
 		.sort((a, b) => b.count - a.count || a.fandom.localeCompare(b.fandom, 'zh'));
 }
+
+/** 按发布年份分组，年份倒序。列表页的归档视图用。 */
+export function groupByYear<T extends { data: { pubDate: Date } }>(
+	entries: T[],
+): { year: number; items: T[] }[] {
+	const groups = new Map<number, T[]>();
+	for (const e of entries) {
+		const y = e.data.pubDate.getFullYear();
+		if (!groups.has(y)) groups.set(y, []);
+		groups.get(y)!.push(e);
+	}
+	return [...groups.entries()]
+		.map(([year, items]) => ({ year, items }))
+		.sort((a, b) => b.year - a.year);
+}

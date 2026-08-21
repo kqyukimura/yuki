@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import WorkCard from '../../components/WorkCard.astro';
-import { getWorksWithStats, getFandomCounts, formatWords } from '../../lib/works';
+import { getWorksWithStats, getFandomCounts, formatWords, groupByYear } from '../../lib/works';
 
 export async function getStaticPaths() {
 	const [fandoms, works] = await Promise.all([getFandomCounts(), getWorksWithStats()]);
@@ -15,21 +15,55 @@ export async function getStaticPaths() {
 }
 
 const { fandom, works } = Astro.props;
+const years = groupByYear(works);
 const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
 ---
 
 <Base title={fandom} description={`${fandom} 圈子下的 ${works.length} 篇同人作品`}>
-	<h1>{fandom}</h1>
-	<p class="dim intro">{works.length} 篇 · {formatWords(totalWords)}</p>
+	<header class="page-head">
+		<p class="kicker">圈子</p>
+		<h1>{fandom}</h1>
+		<p class="dim">{works.length} 篇 · {formatWords(totalWords)}</p>
+	</header>
 
-	<ul class="stack">
-		{works.map((work) => <WorkCard work={work} />)}
-	</ul>
+	{
+		years.map((g) => (
+			<section class="year-group">
+				<div class="year">{g.year}</div>
+				<ul class="stack">
+					{g.items.map((work) => (
+						<WorkCard work={work} />
+					))}
+				</ul>
+			</section>
+		))
+	}
 </Base>
 
 <style>
-	.intro {
-		margin-top: -0.5rem;
-		margin-bottom: 2rem;
+	.page-head {
+		padding-bottom: 2.5rem;
+	}
+	.kicker {
+		margin: 0 0 0.2rem;
+		font-size: 0.76rem;
+		letter-spacing: 0.2em;
+		color: var(--text-faint);
+	}
+	.page-head h1 {
+		margin-bottom: 0.3rem;
+	}
+	.page-head .dim {
+		margin: 0;
+	}
+	.year-group + .year-group {
+		margin-top: 3rem;
+	}
+	.year {
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		color: var(--text-faint);
+		letter-spacing: 0.15em;
+		margin-bottom: 0.4rem;
 	}
 </style>

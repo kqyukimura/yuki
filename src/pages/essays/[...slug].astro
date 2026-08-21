@@ -1,9 +1,9 @@
 ---
 import { render } from 'astro:content';
-import { url } from '../../lib/url';
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { url } from '../../lib/url';
 import { getEssays } from '../../lib/works';
 
 export async function getStaticPaths() {
@@ -20,7 +20,7 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 	<article>
 		<header class="head">
 			<h1>{title}</h1>
-			<p class="dim">
+			<p class="meta">
 				<FormattedDate date={pubDate} />
 				{updatedDate && <> · 更新于 <FormattedDate date={updatedDate} /></>}
 			</p>
@@ -35,15 +35,9 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 		{
 			tags.length > 0 && (
 				<footer class="tags">
-					<ul class="meta-row">
-						{tags.map((t) => (
-							<li>
-								<a class="badge" href={url(`/tags/${encodeURIComponent(t)}/`)}>
-									# {t}
-								</a>
-							</li>
-						))}
-					</ul>
+					{tags.map((t) => (
+						<a href={url(`/tags/${encodeURIComponent(t)}/`)}>{t}</a>
+					))}
 				</footer>
 			)
 		}
@@ -52,20 +46,36 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 
 <style>
 	.head {
-		margin-bottom: 2rem;
+		margin-bottom: 2.5rem;
 	}
 	.head h1 {
-		margin-bottom: 0.4rem;
+		margin-bottom: 0.6rem;
+	}
+	.meta {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--text-faint);
 	}
 	.hero {
+		display: block;
 		width: 100%;
 		height: auto;
-		border-radius: 12px;
-		margin-bottom: 2rem;
+		margin-bottom: 2.5rem;
 	}
 	.tags {
-		margin-top: 3rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.3rem;
+		margin-top: 4rem;
 		padding-top: 1.5rem;
-		border-top: 1px solid var(--border);
+		border-top: 1px solid var(--rule);
+	}
+	.tags a {
+		font-size: 0.88rem;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	.tags a:hover {
+		color: var(--accent);
 	}
 </style>

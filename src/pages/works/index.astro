@@ -1,53 +1,96 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { url } from '../../lib/url';
 import WorkCard from '../../components/WorkCard.astro';
-import { getWorksWithStats, getFandomCounts } from '../../lib/works';
-import { formatWords } from '../../lib/works';
+import { url } from '../../lib/url';
+import {
+	getWorksWithStats,
+	getFandomCounts,
+	formatWords,
+	groupByYear,
+} from '../../lib/works';
 
 const works = await getWorksWithStats();
 const fandoms = await getFandomCounts();
+const years = groupByYear(works);
 const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
 ---
 
 <Base title="作品" description="全部同人作品归档">
-	<h1>作品</h1>
-	<p class="dim intro">
-		共 {works.length} 篇 · {formatWords(totalWords)}
-	</p>
-
-	{
-		fandoms.length > 1 && (
-			<ul class="meta-row filters">
-				{fandoms.map((f) => (
-					<li>
-						<a class="badge" href={url(`/fandoms/${encodeURIComponent(f.fandom)}/`)}>
-							{f.fandom} <span class="dim">{f.count}</span>
+	<header class="page-head">
+		<h1>作品</h1>
+		<p class="dim">共 {works.length} 篇 · {formatWords(totalWords)}</p>
+		{
+			fandoms.length > 1 && (
+				<p class="fandoms">
+					{fandoms.map((f) => (
+						<a href={url(`/fandoms/${encodeURIComponent(f.fandom)}/`)}>
+							{f.fandom}
+							<span class="n">{f.count}</span>
 						</a>
-					</li>
-				))}
-			</ul>
-		)
-	}
+					))}
+				</p>
+			)
+		}
+	</header>
 
 	{
 		works.length === 0 ? (
-			<p class="dim">还没有作品。在 <code>src/content/works/</code> 下建一个文件夹就能发布第一篇。</p>
+			<p class="dim">
+				还没有作品。到 <a href={url('/admin/')}>后台</a> 建第一篇。
+			</p>
 		) : (
-			<ul class="stack">
-				{works.map((work) => (
-					<WorkCard work={work} />
-				))}
-			</ul>
+			years.map((g) => (
+				<section class="year-group">
+					<div class="year">{g.year}</div>
+					<ul class="stack">
+						{g.items.map((work) => (
+							<WorkCard work={work} />
+						))}
+					</ul>
+				</section>
+			))
 		)
 	}
 </Base>
 
 <style>
-	.intro {
-		margin-top: -0.5rem;
+	.page-head {
+		padding-bottom: 2.5rem;
 	}
-	.filters {
-		margin: 1.5rem 0 2rem;
+	.page-head h1 {
+		margin-bottom: 0.3rem;
+	}
+	.page-head .dim {
+		margin: 0;
+	}
+	.fandoms {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.3rem;
+		margin: 1.25rem 0 0;
+	}
+	.fandoms a {
+		font-size: 0.9rem;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	.fandoms a:hover {
+		color: var(--accent);
+	}
+	.fandoms .n {
+		font-size: 0.72rem;
+		color: var(--text-faint);
+		margin-left: 0.25em;
+		vertical-align: super;
+	}
+	.year-group + .year-group {
+		margin-top: 3rem;
+	}
+	.year {
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		color: var(--text-faint);
+		letter-spacing: 0.15em;
+		margin-bottom: 0.4rem;
 	}
 </style>

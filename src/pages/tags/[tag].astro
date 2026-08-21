@@ -1,8 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { url } from '../../lib/url';
 import WorkCard from '../../components/WorkCard.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { url } from '../../lib/url';
 import { getWorksWithStats, getEssays, getTagCounts } from '../../lib/works';
 
 export async function getStaticPaths() {
@@ -25,9 +25,12 @@ const { tag, works, essays } = Astro.props;
 const total = works.length + essays.length;
 ---
 
-<Base title={`#${tag}`} description={`标签「${tag}」下的 ${total} 篇内容`}>
-	<h1>#{tag}</h1>
-	<p class="dim intro">{total} 篇内容</p>
+<Base title={tag} description={`标签「${tag}」下的 ${total} 篇内容`}>
+	<header class="page-head">
+		<p class="kicker">标签</p>
+		<h1>{tag}</h1>
+		<p class="dim">{total} 篇内容</p>
+	</header>
 
 	{
 		works.length > 0 && (
@@ -51,9 +54,11 @@ const total = works.length + essays.length;
 						<li>
 							<a class="card" href={url(`/essays/${e.id}/`)}>
 								<h3>{e.data.title}</h3>
-								<p class="dim date">
-									<FormattedDate date={e.data.pubDate} />
-								</p>
+								<ul class="meta-row">
+									<li>
+										<FormattedDate date={e.data.pubDate} />
+									</li>
+								</ul>
 								<p>{e.data.description}</p>
 							</a>
 						</li>
@@ -65,12 +70,22 @@ const total = works.length + essays.length;
 </Base>
 
 <style>
-	.intro {
-		margin-top: -0.5rem;
-		margin-bottom: 2rem;
+	.page-head {
+		padding-bottom: 2rem;
 	}
-	.date {
+	.kicker {
+		margin: 0 0 0.2rem;
+		font-size: 0.76rem;
+		letter-spacing: 0.2em;
+		color: var(--text-faint);
+	}
+	.page-head h1 {
+		margin-bottom: 0.3rem;
+	}
+	.page-head .dim {
 		margin: 0;
-		font-size: 0.8rem;
+	}
+	section h2 {
+		margin-top: 2.5rem;
 	}
 </style>

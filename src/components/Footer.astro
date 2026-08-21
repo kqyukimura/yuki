@@ -6,8 +6,11 @@ const year = new Date().getFullYear();
 
 <footer>
 	<div class="inner">
-		<p class="dim">
-			© {year} {AUTHOR} · 站内同人作品均为非商业性质的二次创作，版权归原作品版权方所有
+		<p>
+			© {year} {AUTHOR}<br />
+			<span class="fine">
+				站内同人作品均为非商业性质的二次创作，版权归原作品版权方所有
+			</span>
 		</p>
 		<div class="links">
 			{SOCIAL.map((s) => <a href={s.href} rel="me">{s.label}</a>)}
@@ -18,25 +21,38 @@ const year = new Date().getFullYear();
 
 <style>
 	footer {
-		border-top: 1px solid var(--border);
-		background: var(--bg-soft);
+		border-top: 1px solid var(--rule);
 	}
 	.inner {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.75rem 1.5rem;
-		align-items: center;
+		gap: 1rem 2rem;
+		align-items: flex-start;
 		justify-content: space-between;
 		max-width: var(--page-width);
 		margin: 0 auto;
-		padding: 1.75rem 1.25rem;
+		padding: 2.5rem 1.5rem 3.5rem;
 	}
 	p {
 		margin: 0;
+		font-size: 0.85rem;
+		color: var(--text-muted);
+		line-height: 1.9;
+	}
+	.fine {
+		color: var(--text-faint);
+		font-size: 0.78rem;
 	}
 	.links {
 		display: flex;
-		gap: 1rem;
-		font-size: 0.875rem;
+		gap: 1.25rem;
+		font-size: 0.85rem;
+	}
+	.links a {
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	.links a:hover {
+		color: var(--accent);
 	}
 </style>

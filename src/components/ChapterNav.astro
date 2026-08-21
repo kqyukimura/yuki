@@ -16,7 +16,7 @@ const { workId, prev, next } = Astro.props;
 		{
 			prev && (
 				<a href={url(`/works/${workId}/${chapterSlugOf(prev)}/`)}>
-					<span class="dim">← 上一章</span>
+					<span class="lbl">上一章</span>
 					<span class="t">{prev.data.title}</span>
 				</a>
 			)
@@ -27,7 +27,7 @@ const { workId, prev, next } = Astro.props;
 		{
 			next && (
 				<a href={url(`/works/${workId}/${chapterSlugOf(next)}/`)}>
-					<span class="dim">下一章 →</span>
+					<span class="lbl">下一章</span>
 					<span class="t">{next.data.title}</span>
 				</a>
 			)
@@ -39,10 +39,10 @@ const { workId, prev, next } = Astro.props;
 	.chapter-nav {
 		display: flex;
 		align-items: flex-start;
-		gap: 1rem;
-		margin-top: 3rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--border);
+		gap: 1.5rem;
+		margin-top: 4rem;
+		padding-top: 1.75rem;
+		border-top: 1px solid var(--rule);
 	}
 	.side {
 		flex: 1;
@@ -54,12 +54,18 @@ const { workId, prev, next } = Astro.props;
 	.side a {
 		display: flex;
 		flex-direction: column;
-		gap: 0.15rem;
+		gap: 0.2rem;
 		text-decoration: none;
 	}
-	.side .t {
+	.lbl {
+		font-size: 0.74rem;
+		letter-spacing: 0.1em;
+		color: var(--text-faint);
+	}
+	.t {
+		font-family: var(--font-serif);
+		font-size: 0.98rem;
 		color: var(--text);
-		font-size: 0.95rem;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -69,15 +75,12 @@ const { workId, prev, next } = Astro.props;
 	}
 	.toc {
 		flex: 0 0 auto;
-		padding: 0.35em 0.9em;
-		border: 1px solid var(--border);
-		border-radius: 8px;
-		font-size: 0.875rem;
-		text-decoration: none;
+		align-self: center;
+		font-size: 0.85rem;
 		color: var(--text-muted);
+		text-decoration: none;
 	}
 	.toc:hover {
-		border-color: var(--accent);
 		color: var(--accent);
 	}
 </style>

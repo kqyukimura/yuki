@@ -1,55 +1,51 @@
 /* ═══════════════════════════════════════════════════════════
-   全站样式。设计目标：长篇中文阅读不累眼。
-   改配色只需要动下面两块 :root 里的变量。
+   书页感 · 文学向
+   设计原则：靠留白和细横线分区，不靠边框和阴影；
+   标题用宋体建立字重对比，正文优先长时间阅读的舒适度。
+   改配色只需要动下面两块 :root。
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-	/* 浅色：暖白纸感，不用纯白，减少长时间阅读的刺眼感 */
 	--bg: #fdfbf7;
-	--bg-soft: #f5f1e9;
-	--bg-card: #ffffff;
-	--text: #2b2724;
-	--text-muted: #6d655d;
-	--text-faint: #9a918a;
-	--border: #e5ded2;
-	--accent: #a24b34;
-	--accent-soft: #f3e3dd;
-	--shadow: 0 1px 2px rgba(43, 39, 36, 0.04), 0 6px 20px rgba(43, 39, 36, 0.06);
+	--bg-soft: #f5f0e6;
+	--text: #241f1b;
+	--text-muted: #6b6259;
+	--text-faint: #a0968b;
+	--rule: #e3dacb;
+	--accent: #8c4a33;
+	--accent-soft: #f2e4de;
 
+	/* 中文衬线没法用 webfont（字库太大），走系统栈 */
+	--font-serif: 'Source Han Serif SC', 'Noto Serif SC', 'Songti SC', 'STSong',
+		'SimSun', Georgia, 'Times New Roman', serif;
 	--font-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB',
 		'Microsoft YaHei', 'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif;
-	--font-serif: 'Source Han Serif SC', 'Noto Serif SC', 'Songti SC', 'SimSun', Georgia,
-		'Times New Roman', serif;
 
-	--reading-width: 38rem;
-	--page-width: 62rem;
+	--reading-width: 36rem;
+	--page-width: 54rem;
 }
 
 :root[data-theme='dark'] {
-	--bg: #16140f;
-	--bg-soft: #1e1b16;
-	--bg-card: #211d18;
-	--text: #e8e1d6;
-	--text-muted: #a89e91;
-	--text-faint: #7a7166;
-	--border: #332d25;
-	--accent: #e0937a;
-	--accent-soft: #3a2a24;
-	--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.35);
+	--bg: #16130f;
+	--bg-soft: #1d1915;
+	--text: #eae2d6;
+	--text-muted: #a79c8d;
+	--text-faint: #776d60;
+	--rule: #2e2921;
+	--accent: #d08a6b;
+	--accent-soft: #33241d;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme='light']) {
-		--bg: #16140f;
-		--bg-soft: #1e1b16;
-		--bg-card: #211d18;
-		--text: #e8e1d6;
-		--text-muted: #a89e91;
-		--text-faint: #7a7166;
-		--border: #332d25;
-		--accent: #e0937a;
-		--accent-soft: #3a2a24;
-		--shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.35);
+		--bg: #16130f;
+		--bg-soft: #1d1915;
+		--text: #eae2d6;
+		--text-muted: #a79c8d;
+		--text-faint: #776d60;
+		--rule: #2e2921;
+		--accent: #d08a6b;
+		--accent-soft: #33241d;
 	}
 }
 
@@ -71,8 +67,8 @@ body {
 	background: var(--bg);
 	color: var(--text);
 	font-family: var(--font-sans);
-	font-size: 16px;
-	line-height: 1.75;
+	font-size: 16.5px;
+	line-height: 1.8;
 	word-wrap: break-word;
 	-webkit-font-smoothing: antialiased;
 }
@@ -82,30 +78,31 @@ main {
 	width: 100%;
 	max-width: var(--page-width);
 	margin: 0 auto;
-	padding: 3rem 1.25rem 5rem;
+	padding: 4rem 1.5rem 6rem;
 }
 
 main.reading {
-	max-width: calc(var(--reading-width) + 2.5rem);
+	max-width: calc(var(--reading-width) + 3rem);
 }
 
-/* ── 标题 ───────────────────────────────────────────────── */
+/* ── 标题：宋体，靠字重和字号建立层次 ──────────────────── */
 h1,
 h2,
 h3,
 h4 {
 	margin: 0 0 0.6em;
-	line-height: 1.35;
+	font-family: var(--font-serif);
 	font-weight: 600;
+	line-height: 1.4;
 	color: var(--text);
 }
 h1 {
-	font-size: 1.9rem;
-	letter-spacing: -0.01em;
+	font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+	line-height: 1.3;
 }
 h2 {
-	font-size: 1.4rem;
-	margin-top: 2em;
+	font-size: 1.3rem;
+	margin-top: 2.5em;
 }
 h3 {
 	font-size: 1.15rem;
@@ -114,17 +111,14 @@ h3 {
 
 a {
 	color: var(--accent);
+	text-underline-offset: 0.25em;
 	text-decoration-thickness: 1px;
-	text-underline-offset: 0.2em;
-}
-a:hover {
-	text-decoration-style: solid;
 }
 
 hr {
 	border: 0;
-	border-top: 1px solid var(--border);
-	margin: 2.5rem 0;
+	border-top: 1px solid var(--rule);
+	margin: 3rem 0;
 }
 
 img {
@@ -135,13 +129,12 @@ img {
 code {
 	background: var(--bg-soft);
 	padding: 0.15em 0.4em;
-	border-radius: 4px;
-	font-size: 0.9em;
+	border-radius: 3px;
+	font-size: 0.88em;
 }
 pre {
 	background: var(--bg-soft);
-	padding: 1rem;
-	border-radius: 8px;
+	padding: 1rem 1.2rem;
 	overflow-x: auto;
 }
 pre code {
@@ -150,37 +143,35 @@ pre code {
 }
 
 blockquote {
-	margin: 1.5em 0;
-	padding: 0.2em 0 0.2em 1.2em;
-	border-left: 3px solid var(--border);
+	margin: 1.8em 0;
+	padding-left: 1.4em;
+	border-left: 2px solid var(--rule);
 	color: var(--text-muted);
 }
 
 table {
 	width: 100%;
 	border-collapse: collapse;
-	margin: 1.5em 0;
+	margin: 1.8em 0;
 }
 th,
 td {
-	padding: 0.5em 0.75em;
-	border-bottom: 1px solid var(--border);
+	padding: 0.6em 0.8em;
+	border-bottom: 1px solid var(--rule);
 	text-align: left;
 }
 
-/* ── 正文排版：小说/随笔的阅读区 ────────────────────────── */
+/* ── 正文阅读区 ─────────────────────────────────────────── */
 .prose {
 	font-family: var(--font-serif);
-	font-size: 1.075rem;
-	line-height: 2;
+	font-size: 1.1rem;
+	line-height: 2.05;
 	color: var(--text);
 }
 .prose p {
-	margin: 0 0 1.4em;
-	/* 中文段落首行缩进两字，这是中文小说的习惯排版 */
-	text-indent: 2em;
+	margin: 0 0 1.5em;
+	text-indent: 2em; /* 中文小说的习惯排版 */
 }
-/* 缩进只对连续正文有意义，这些元素要排除 */
 .prose li p,
 .prose blockquote p,
 .prose figcaption,
@@ -189,102 +180,91 @@ td {
 }
 .prose h2,
 .prose h3 {
-	font-family: var(--font-sans);
 	text-indent: 0;
 }
+/* 场景分隔：正文里单独一行写 *** */
 .prose hr {
-	width: 30%;
-	margin: 3rem auto;
-}
-/* 场景分隔符：正文里单独一行写 `***` 就会渲染成这个 */
-.prose hr + p {
-	text-indent: 2em;
+	width: 4rem;
+	margin: 3.5rem auto;
+	border-top: 1px solid var(--rule);
 }
 
-/* ── 徽章 / 元信息标签 ──────────────────────────────────── */
-.badge {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3em;
-	padding: 0.15em 0.6em;
-	border-radius: 999px;
-	font-size: 0.78rem;
-	line-height: 1.7;
+/* ── 元信息：纯文本，用间隔号分隔，不用胶囊标签 ────────── */
+.meta-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 0.65rem;
+	margin: 0 0 0.75rem;
+	padding: 0;
+	list-style: none;
 	font-family: var(--font-sans);
-	white-space: nowrap;
-	border: 1px solid var(--border);
+	font-size: 0.82rem;
 	color: var(--text-muted);
-	background: var(--bg-soft);
+}
+.meta-row > li + li::before {
+	content: '·';
+	margin-right: 0.65rem;
+	color: var(--text-faint);
+}
+.badge {
+	color: inherit;
 	text-decoration: none;
 }
 a.badge:hover {
-	border-color: var(--accent);
 	color: var(--accent);
+	text-decoration: underline;
 }
 .badge.is-accent {
-	background: var(--accent-soft);
-	border-color: transparent;
 	color: var(--accent);
 }
 .badge.is-warn {
-	background: var(--accent-soft);
-	border-color: var(--accent);
 	color: var(--accent);
 	font-weight: 600;
 }
 
-.meta-row {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.4rem;
-	align-items: center;
-	margin: 0 0 0.75rem;
-	padding: 0;
-	list-style: none;
-}
-
 .dim {
 	color: var(--text-muted);
-	font-size: 0.875rem;
+	font-size: 0.85rem;
 }
 
-/* ── 通用卡片列表 ───────────────────────────────────────── */
+/* ── 条目列表：细横线分隔，无卡片边框 ───────────────────── */
 .stack {
-	display: grid;
-	gap: 1rem;
+	display: block;
 	list-style: none;
 	margin: 0;
 	padding: 0;
+	border-top: 1px solid var(--rule);
 }
 
 .card {
 	display: block;
-	padding: 1.25rem 1.4rem;
-	background: var(--bg-card);
-	border: 1px solid var(--border);
-	border-radius: 12px;
+	padding: 1.75rem 0;
+	border-bottom: 1px solid var(--rule);
 	text-decoration: none;
 	color: inherit;
-	transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+	transition: padding-left 0.18s ease;
 }
 .card:hover {
-	border-color: var(--accent);
-	box-shadow: var(--shadow);
-	transform: translateY(-1px);
+	padding-left: 0.5rem;
 }
 .card h3 {
-	margin: 0 0 0.4rem;
-	font-size: 1.15rem;
+	margin: 0 0 0.5rem;
+	font-size: 1.3rem;
+	font-weight: 600;
 	color: var(--text);
+	transition: color 0.15s ease;
+}
+.card:hover h3 {
+	color: var(--accent);
 }
 .card p {
-	margin: 0.5rem 0 0;
+	margin: 0.6rem 0 0;
 	color: var(--text-muted);
-	font-size: 0.925rem;
-	line-height: 1.7;
+	font-size: 0.92rem;
+	line-height: 1.75;
 }
 
-/* 屏幕阅读器专用 */
 .sr-only {
 	position: absolute;
 	width: 1px;
@@ -299,16 +279,16 @@ a.badge:hover {
 
 @media (max-width: 720px) {
 	body {
-		font-size: 15.5px;
+		font-size: 16px;
 	}
 	main {
-		padding: 2rem 1rem 3.5rem;
-	}
-	h1 {
-		font-size: 1.6rem;
+		padding: 2.5rem 1.25rem 4rem;
 	}
 	.prose {
 		font-size: 1.05rem;
 		line-height: 1.95;
+	}
+	.card {
+		padding: 1.4rem 0;
 	}
 }

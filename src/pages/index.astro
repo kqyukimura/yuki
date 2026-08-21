@@ -1,40 +1,53 @@
 ---
 import Base from '../layouts/Base.astro';
-import { url } from '../lib/url';
 import WorkCard from '../components/WorkCard.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
-import { getWorksWithStats, getEssays, getTagCounts } from '../lib/works';
+import { SITE_TITLE, SITE_DESCRIPTION, SITE_QUOTE } from '../consts';
+import { url } from '../lib/url';
+import { getWorksWithStats, getEssays, getTagCounts, groupByYear } from '../lib/works';
 
 const all = await getWorksWithStats();
-// 置顶的排前面，其余按时间倒序（getWorksWithStats 已排好序）
-const works = [...all].sort((a, b) => Number(b.data.featured) - Number(a.data.featured)).slice(0, 5);
+// 置顶的排前面，其余保持时间倒序
+const recent = [...all]
+	.sort((a, b) => Number(b.data.featured) - Number(a.data.featured))
+	.slice(0, 5);
+const years = groupByYear(recent);
 const essays = (await getEssays()).slice(0, 4);
-const tags = (await getTagCounts()).slice(0, 20);
+const tags = (await getTagCounts()).slice(0, 24);
 ---
 
 <Base title={SITE_TITLE} description={SITE_DESCRIPTION}>
-	<section class="hero">
-		<h1>{SITE_TITLE}</h1>
-		<p>{SITE_DESCRIPTION}</p>
-	</section>
+	<header class="hero">
+		<div class="hero-text">
+			<h1>{SITE_TITLE}</h1>
+			<p>{SITE_DESCRIPTION}</p>
+		</div>
+		{SITE_QUOTE && <aside class="quote" aria-hidden="true">{SITE_QUOTE}</aside>}
+	</header>
 
 	<section>
 		<div class="sec-head">
 			<h2>作品</h2>
-			{all.length > works.length && <a class="more" href={url('/works/')}>全部 {all.length} 篇 →</a>}
+			{all.length > recent.length && <a class="more" href={url('/works/')}>全部 {all.length} 篇</a>}
 		</div>
+
 		{
-			works.length === 0 ? (
-				<p class="dim">
-					还没有作品。复制 <code>src/content/works/</code> 里的示例文件夹，改成你自己的就行。
+			recent.length === 0 ? (
+				<p class="dim empty">
+					还没有作品。到 <a href={url('/admin/')}>后台</a> 建第一篇，或在
+					<code>src/content/works/</code> 下新建文件夹。
 				</p>
 			) : (
-				<ul class="stack">
-					{works.map((work) => (
-						<WorkCard work={work} />
-					))}
-				</ul>
+				years.map((g) => (
+					<div class="year-group">
+						<div class="year">{g.year}</div>
+						<ul class="stack">
+							{g.items.map((work) => (
+								<WorkCard work={work} />
+							))}
+						</ul>
+					</div>
+				))
 			)
 		}
 	</section>
@@ -45,15 +58,15 @@ const tags = (await getTagCounts()).slice(0, 20);
 				<div class="sec-head">
 					<h2>随笔</h2>
 					<a class="more" href={url('/essays/')}>
-						全部 →
+						全部
 					</a>
 				</div>
-				<ul class="stack tight">
+				<ul class="rows">
 					{essays.map((e) => (
 						<li>
-							<a class="row" href={url(`/essays/${e.id}/`)}>
+							<a href={url(`/essays/${e.id}/`)}>
 								<span class="rt">{e.data.title}</span>
-								<span class="dim">
+								<span class="rd">
 									<FormattedDate date={e.data.pubDate} />
 								</span>
 							</a>
@@ -68,74 +81,158 @@ const tags = (await getTagCounts()).slice(0, 20);
 		tags.length > 0 && (
 			<section>
 				<h2>标签</h2>
-				<ul class="meta-row">
+				<p class="tag-cloud">
 					{tags.map((t) => (
-						<li>
-							<a class="badge" href={url(`/tags/${encodeURIComponent(t.tag)}/`)}>
-								# {t.tag} <span class="dim">{t.count}</span>
-							</a>
-						</li>
+						<a href={url(`/tags/${encodeURIComponent(t.tag)}/`)}>
+							{t.tag}
+							<span class="n">{t.count}</span>
+						</a>
 					))}
-				</ul>
+				</p>
 			</section>
 		)
 	}
 </Base>
 
 <style>
+	/* ── 首页题头：大标题 + 右侧竖排引言 ─────────────────── */
 	.hero {
-		padding: 1rem 0 3rem;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 3rem;
+		padding: 1.5rem 0 4rem;
+	}
+	.hero-text {
+		min-width: 0;
 	}
 	.hero h1 {
-		font-size: 2.2rem;
-		margin-bottom: 0.3rem;
+		font-size: clamp(2.4rem, 7vw, 3.6rem);
+		margin: 0 0 0.5rem;
+		letter-spacing: 0.02em;
 	}
 	.hero p {
 		margin: 0;
 		color: var(--text-muted);
+		font-family: var(--font-serif);
 		font-size: 1.05rem;
 	}
+	.quote {
+		writing-mode: vertical-rl;
+		font-family: var(--font-serif);
+		font-size: 0.9rem;
+		letter-spacing: 0.3em;
+		color: var(--text-faint);
+		padding: 0.25rem 0 0.25rem 1.4rem;
+		border-left: 1px solid var(--rule);
+		flex: 0 0 auto;
+	}
+
 	section {
-		margin-bottom: 3.5rem;
+		margin-bottom: 4.5rem;
 	}
 	.sec-head {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
 		gap: 1rem;
+		margin-bottom: 0.5rem;
 	}
 	.sec-head h2 {
-		margin-top: 0;
+		margin: 0;
 	}
 	.more {
-		font-size: 0.875rem;
+		font-family: var(--font-sans);
+		font-size: 0.82rem;
+		color: var(--text-muted);
 		text-decoration: none;
 		white-space: nowrap;
 	}
-	.stack.tight {
-		gap: 0;
+	.more:hover {
+		color: var(--accent);
 	}
-	.row {
+	.empty {
+		padding-top: 1rem;
+	}
+
+	/* ── 年份归档：年份作为浅色标记浮在列表左上 ──────────── */
+	.year-group + .year-group {
+		margin-top: 2.5rem;
+	}
+	.year {
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		color: var(--text-faint);
+		letter-spacing: 0.15em;
+		margin-bottom: 0.4rem;
+	}
+
+	/* ── 随笔紧凑行 ─────────────────────────────────────── */
+	.rows {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid var(--rule);
+	}
+	.rows a {
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
-		gap: 1rem;
-		padding: 0.7rem 0.25rem;
-		border-bottom: 1px solid var(--border);
+		gap: 1.5rem;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid var(--rule);
 		text-decoration: none;
+		transition: padding-left 0.18s ease;
+	}
+	.rows a:hover {
+		padding-left: 0.5rem;
 	}
 	.rt {
+		font-family: var(--font-serif);
+		font-size: 1.02rem;
 		color: var(--text);
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.row:hover .rt {
+	.rows a:hover .rt {
 		color: var(--accent);
 	}
-	.row .dim {
+	.rd {
 		flex: 0 0 auto;
-		font-size: 0.8rem;
+		font-size: 0.78rem;
+		color: var(--text-faint);
+	}
+
+	/* ── 标签云：文字链接，不用胶囊 ─────────────────────── */
+	.tag-cloud {
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.4rem;
+	}
+	.tag-cloud a {
+		font-size: 0.92rem;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	.tag-cloud a:hover {
+		color: var(--accent);
+	}
+	.tag-cloud .n {
+		font-size: 0.72rem;
+		color: var(--text-faint);
+		margin-left: 0.25em;
+		vertical-align: super;
+	}
+
+	@media (max-width: 900px) {
+		.quote {
+			display: none;
+		}
+		.hero {
+			padding-bottom: 3rem;
+		}
 	}
 </style>

@@ -1,10 +1,16 @@
 ---
 import { render } from 'astro:content';
-import { url } from '../../../lib/url';
 import Base from '../../../layouts/Base.astro';
 import ChapterNav from '../../../components/ChapterNav.astro';
 import FormattedDate from '../../../components/FormattedDate.astro';
-import { getWorks, getChaptersOf, chapterSlugOf, countWords, formatWords } from '../../../lib/works';
+import { url } from '../../../lib/url';
+import {
+	getWorks,
+	getChaptersOf,
+	chapterSlugOf,
+	countWords,
+	formatWords,
+} from '../../../lib/works';
 
 export async function getStaticPaths() {
 	const works = await getWorks();
@@ -39,9 +45,9 @@ const { Content } = await render(chapter);
 >
 	<article>
 		<header class="head">
-			<a class="up dim" href={url(`/works/${work.id}/`)}>‹ {work.data.title}</a>
+			<a class="up" href={url(`/works/${work.id}/`)}>{work.data.title}</a>
 			<h1>{chapter.data.title}</h1>
-			<p class="dim">
+			<p class="meta">
 				第 {chapter.data.order} / {total} 章 · {formatWords(countWords(chapter.body))}{' · '}
 				<FormattedDate date={chapter.data.pubDate} />
 			</p>
@@ -59,25 +65,37 @@ const { Content } = await render(chapter);
 
 <style>
 	.head {
-		margin-bottom: 2rem;
+		margin-bottom: 2.5rem;
 	}
 	.up {
 		display: inline-block;
-		margin-bottom: 0.75rem;
+		margin-bottom: 1rem;
+		font-size: 0.85rem;
+		color: var(--text-muted);
 		text-decoration: none;
+	}
+	.up::before {
+		content: '← ';
 	}
 	.up:hover {
 		color: var(--accent);
 	}
 	.head h1 {
-		margin-bottom: 0.4rem;
+		margin-bottom: 0.6rem;
 	}
+	.meta {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--text-faint);
+	}
+	/* 章节前注：左侧细线，不用整块灰底 */
 	.note {
-		padding: 0.85rem 1.1rem;
-		margin-bottom: 2rem;
-		border-radius: 10px;
-		background: var(--bg-soft);
+		margin: 0 0 2.5rem;
+		padding-left: 1.1rem;
+		border-left: 2px solid var(--rule);
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		line-height: 1.9;
 		color: var(--text-muted);
-		font-size: 0.925rem;
 	}
 </style>

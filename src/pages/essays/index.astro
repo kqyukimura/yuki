@@ -1,44 +1,70 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { url } from '../../lib/url';
 import FormattedDate from '../../components/FormattedDate.astro';
-import { getEssays } from '../../lib/works';
+import { url } from '../../lib/url';
+import { getEssays, groupByYear } from '../../lib/works';
 
 const essays = await getEssays();
+const years = groupByYear(essays);
 ---
 
 <Base title="随笔" description="杂谈、创作手记与其他文字">
-	<h1>随笔</h1>
-	<p class="dim intro">共 {essays.length} 篇</p>
+	<header class="page-head">
+		<h1>随笔</h1>
+		<p class="dim">共 {essays.length} 篇</p>
+	</header>
 
 	{
 		essays.length === 0 ? (
-			<p class="dim">还没有随笔。在 <code>src/content/essays/</code> 下新建 md 文件即可。</p>
+			<p class="dim">
+				还没有随笔。到 <a href={url('/admin/')}>后台</a> 写一篇。
+			</p>
 		) : (
-			<ul class="stack">
-				{essays.map((e) => (
-					<li>
-						<a class="card" href={url(`/essays/${e.id}/`)}>
-							<h3>{e.data.title}</h3>
-							<p class="dim date">
-								<FormattedDate date={e.data.pubDate} />
-							</p>
-							<p>{e.data.description}</p>
-						</a>
-					</li>
-				))}
-			</ul>
+			years.map((g) => (
+				<section class="year-group">
+					<div class="year">{g.year}</div>
+					<ul class="stack">
+						{g.items.map((e) => (
+							<li>
+								<a class="card" href={url(`/essays/${e.id}/`)}>
+									<h3>{e.data.title}</h3>
+									<ul class="meta-row">
+										<li>
+											<FormattedDate date={e.data.pubDate} />
+										</li>
+										{e.data.tags.slice(0, 3).map((t) => (
+											<li>{t}</li>
+										))}
+									</ul>
+									<p>{e.data.description}</p>
+								</a>
+							</li>
+						))}
+					</ul>
+				</section>
+			))
 		)
 	}
 </Base>
 
 <style>
-	.intro {
-		margin-top: -0.5rem;
-		margin-bottom: 2rem;
+	.page-head {
+		padding-bottom: 2.5rem;
 	}
-	.date {
+	.page-head h1 {
+		margin-bottom: 0.3rem;
+	}
+	.page-head .dim {
 		margin: 0;
-		font-size: 0.8rem;
+	}
+	.year-group + .year-group {
+		margin-top: 3rem;
+	}
+	.year {
+		font-family: var(--font-serif);
+		font-size: 0.95rem;
+		color: var(--text-faint);
+		letter-spacing: 0.15em;
+		margin-bottom: 0.4rem;
 	}
 </style>

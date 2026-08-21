@@ -1,28 +1,68 @@
 ---
+import { Image } from 'astro:assets';
 import type { Work, WorkStats } from '../lib/works';
 import { url } from '../lib/url';
 import WorkMeta from './WorkMeta.astro';
-import FormattedDate from './FormattedDate.astro';
 
 interface Props {
 	work: Work & { stats: WorkStats };
 }
 const { work } = Astro.props;
+const { heroImage } = work.data;
 ---
 
 <li>
-	<a class="card" href={url(`/works/${work.id}/`)}>
-		<h3>{work.data.title}</h3>
-		{/* 卡片整体就是链接，里面的元信息不能再套 <a> */}
-		<WorkMeta work={work} stats={work.stats} linked={false} />
-		<p>{work.data.summary}</p>
-		<p class="dim date"><FormattedDate date={work.data.pubDate} /></p>
+	<a class="card entry" href={url(`/works/${work.id}/`)}>
+		<div class="body">
+			<h3>{work.data.title}</h3>
+			{/* 卡片整体就是链接，里面的元信息不能再套 <a> */}
+			<WorkMeta work={work} stats={work.stats} linked={false} />
+			<p>{work.data.summary}</p>
+		</div>
+		{
+			heroImage && (
+				<div class="thumb">
+					<Image src={heroImage} alt="" width={220} height={293} />
+				</div>
+			)
+		}
 	</a>
 </li>
 
 <style>
-	.date {
-		margin-top: 0.75rem;
-		font-size: 0.8rem;
+	.entry {
+		display: flex;
+		align-items: flex-start;
+		gap: 1.75rem;
+	}
+	.body {
+		flex: 1;
+		min-width: 0;
+	}
+	.body p {
+		max-width: 42em;
+	}
+	/* 有封面才出现，按书封比例裁切 */
+	.thumb {
+		flex: 0 0 88px;
+		margin-top: 0.35rem;
+	}
+	.thumb :global(img) {
+		display: block;
+		width: 88px;
+		height: 117px;
+		object-fit: cover;
+	}
+	@media (max-width: 560px) {
+		.entry {
+			gap: 1rem;
+		}
+		.thumb {
+			flex-basis: 64px;
+		}
+		.thumb :global(img) {
+			width: 64px;
+			height: 85px;
+		}
 	}
 </style>

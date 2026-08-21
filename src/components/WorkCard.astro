@@ -13,19 +13,19 @@ const { heroImage } = work.data;
 
 <li>
 	<a class="card entry" href={url(`/works/${work.id}/`)}>
+		{
+			heroImage && (
+				<div class="thumb">
+					<Image src={heroImage} alt="" width={240} height={320} />
+				</div>
+			)
+		}
 		<div class="body">
 			<h3>{work.data.title}</h3>
 			{/* 卡片整体就是链接，里面的元信息不能再套 <a> */}
 			<WorkMeta work={work} stats={work.stats} linked={false} />
 			<p>{work.data.summary}</p>
 		</div>
-		{
-			heroImage && (
-				<div class="thumb">
-					<Image src={heroImage} alt="" width={220} height={293} />
-				</div>
-			)
-		}
 	</a>
 </li>
 
@@ -33,29 +33,26 @@ const { heroImage } = work.data;
 	.entry {
 		display: flex;
 		align-items: flex-start;
-		gap: 1.75rem;
+		gap: 1.2rem;
 	}
 	.body {
 		flex: 1;
 		min-width: 0;
 	}
-	.body p {
-		max-width: 42em;
-	}
-	/* 有封面才出现，按书封比例裁切 */
+	/* 有封面才出现 */
 	.thumb {
-		flex: 0 0 88px;
-		margin-top: 0.35rem;
+		flex: 0 0 84px;
 	}
 	.thumb :global(img) {
 		display: block;
-		width: 88px;
-		height: 117px;
+		width: 84px;
+		height: 112px;
 		object-fit: cover;
+		border-radius: var(--r-md);
 	}
 	@media (max-width: 560px) {
 		.entry {
-			gap: 1rem;
+			gap: 0.9rem;
 		}
 		.thumb {
 			flex-basis: 64px;

@@ -57,7 +57,6 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 
 		<p class="summary">{summary}</p>
 
-		{/* 短篇：index.md 的正文就是作品本身。长篇：这里是前言/说明 */}
 		<div class="prose">
 			<Content />
 		</div>
@@ -66,10 +65,10 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 			!stats.isOneshot && (
 				<section class="toc">
 					<h2>目录</h2>
-					<ol class="chapters">
+					<ol class="stack">
 						{chapters.map((c) => (
 							<li>
-								<a href={url(`/works/${work.id}/${chapterSlugOf(c)}/`)}>
+								<a class="card chapter" href={url(`/works/${work.id}/${chapterSlugOf(c)}/`)}>
 									<span class="num">{String(c.data.order).padStart(2, '0')}</span>
 									<span class="ct">{c.data.title}</span>
 									<span class="wc">{formatWords(countWords(c.body))}</span>
@@ -84,9 +83,15 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 		{
 			tags.length > 0 && (
 				<footer class="tags">
-					{tags.map((t) => (
-						<a href={url(`/tags/${encodeURIComponent(t)}/`)}>{t}</a>
-					))}
+					<ul class="meta-row">
+						{tags.map((t) => (
+							<li>
+								<a class="badge" href={url(`/tags/${encodeURIComponent(t)}/`)}>
+									{t}
+								</a>
+							</li>
+						))}
+					</ul>
 				</footer>
 			)
 		}
@@ -95,7 +100,7 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 
 <style>
 	.head {
-		margin-bottom: 2.5rem;
+		margin-bottom: 1.75rem;
 	}
 	.head h1 {
 		margin-bottom: 0.9rem;
@@ -109,17 +114,17 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 		display: block;
 		width: 100%;
 		height: auto;
-		margin-bottom: 2.5rem;
+		border-radius: var(--r-xl);
+		margin-bottom: 1.75rem;
 	}
-	/* 预警用左侧色条，比整框边框安静但依然醒目 */
 	.warnings {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: 0.25rem 0.75rem;
-		padding: 0.8rem 0 0.8rem 1.1rem;
-		margin-bottom: 2rem;
-		border-left: 2px solid var(--accent);
+		gap: 0.25rem 0.7rem;
+		padding: 0.9rem 1.2rem;
+		margin-bottom: 1.5rem;
+		border-radius: var(--r-md);
 		background: var(--accent-soft);
 		font-size: 0.88rem;
 	}
@@ -131,41 +136,29 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 		color: var(--text-muted);
 	}
 	.summary {
-		margin: 0 0 2.5rem;
-		font-family: var(--font-serif);
-		font-size: 1.02rem;
-		line-height: 1.95;
+		margin: 0 0 2rem;
+		padding: 1.1rem 1.3rem;
+		border-radius: var(--r-lg);
+		background: var(--surface-2);
+		font-size: 0.96rem;
+		line-height: 1.8;
 		color: var(--text-muted);
 	}
-
-	/* ── 目录 ───────────────────────────────────────────── */
 	.toc {
-		margin-top: 4rem;
+		margin-top: 3rem;
 	}
 	.toc h2 {
 		margin-top: 0;
+		font-size: 1.15rem;
 	}
-	.chapters {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		border-top: 1px solid var(--rule);
-	}
-	.chapters a {
+	.chapter {
 		display: flex;
-		align-items: baseline;
-		gap: 1.1rem;
-		padding: 0.9rem 0;
-		border-bottom: 1px solid var(--rule);
-		text-decoration: none;
-		transition: padding-left 0.18s ease;
-	}
-	.chapters a:hover {
-		padding-left: 0.5rem;
+		align-items: center;
+		gap: 1rem;
+		padding: 1rem 1.4rem;
 	}
 	.num {
 		flex: 0 0 auto;
-		font-family: var(--font-serif);
 		font-size: 0.85rem;
 		color: var(--text-faint);
 		font-variant-numeric: tabular-nums;
@@ -173,33 +166,21 @@ const { title, summary, warnings, tags, pubDate, updatedDate, heroImage } = work
 	.ct {
 		flex: 1;
 		min-width: 0;
-		font-family: var(--font-serif);
-		font-size: 1.02rem;
+		font-size: 1rem;
 		color: var(--text);
-	}
-	.chapters a:hover .ct {
-		color: var(--accent);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 	.wc {
 		flex: 0 0 auto;
 		font-size: 0.76rem;
 		color: var(--text-faint);
 	}
-
 	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.3rem;
-		margin-top: 4rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--rule);
+		margin-top: 3rem;
 	}
-	.tags a {
-		font-size: 0.88rem;
-		color: var(--text-muted);
-		text-decoration: none;
-	}
-	.tags a:hover {
-		color: var(--accent);
+	.tags .meta-row {
+		margin: 0;
 	}
 </style>

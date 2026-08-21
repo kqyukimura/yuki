@@ -54,11 +54,9 @@ const total = works.length + essays.length;
 						<li>
 							<a class="card" href={url(`/essays/${e.id}/`)}>
 								<h3>{e.data.title}</h3>
-								<ul class="meta-row">
-									<li>
-										<FormattedDate date={e.data.pubDate} />
-									</li>
-								</ul>
+								<p class="d">
+									<FormattedDate date={e.data.pubDate} />
+								</p>
 								<p>{e.data.description}</p>
 							</a>
 						</li>
@@ -71,21 +69,27 @@ const total = works.length + essays.length;
 
 <style>
 	.page-head {
-		padding-bottom: 2rem;
+		padding: 1rem 0 1.75rem;
 	}
 	.kicker {
 		margin: 0 0 0.2rem;
 		font-size: 0.76rem;
-		letter-spacing: 0.2em;
+		letter-spacing: 0.12em;
 		color: var(--text-faint);
 	}
 	.page-head h1 {
-		margin-bottom: 0.3rem;
+		margin-bottom: 0.25rem;
 	}
 	.page-head .dim {
 		margin: 0;
 	}
 	section h2 {
 		margin-top: 2.5rem;
+		font-size: 1.15rem;
+	}
+	.d {
+		margin: 0;
+		font-size: 0.78rem;
+		color: var(--text-faint);
 	}
 </style>

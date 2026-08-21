@@ -4,50 +4,46 @@ import WorkCard from '../components/WorkCard.astro';
 import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION, SITE_QUOTE } from '../consts';
 import { url } from '../lib/url';
-import { getWorksWithStats, getEssays, getTagCounts, groupByYear } from '../lib/works';
+import { getWorksWithStats, getEssays, getTagCounts } from '../lib/works';
 
 const all = await getWorksWithStats();
 // 置顶的排前面，其余保持时间倒序
 const recent = [...all]
 	.sort((a, b) => Number(b.data.featured) - Number(a.data.featured))
 	.slice(0, 5);
-const years = groupByYear(recent);
 const essays = (await getEssays()).slice(0, 4);
 const tags = (await getTagCounts()).slice(0, 24);
 ---
 
 <Base title={SITE_TITLE} description={SITE_DESCRIPTION}>
 	<header class="hero">
-		<div class="hero-text">
-			<h1>{SITE_TITLE}</h1>
-			<p>{SITE_DESCRIPTION}</p>
-		</div>
-		{SITE_QUOTE && <aside class="quote" aria-hidden="true">{SITE_QUOTE}</aside>}
+		<h1 class="grad-text">{SITE_QUOTE || SITE_TITLE}</h1>
+		<p>{SITE_DESCRIPTION}</p>
 	</header>
 
 	<section>
 		<div class="sec-head">
 			<h2>作品</h2>
-			{all.length > recent.length && <a class="more" href={url('/works/')}>全部 {all.length} 篇</a>}
+			{
+				all.length > recent.length && (
+					<a class="badge" href={url('/works/')}>
+						全部 {all.length} 篇
+					</a>
+				)
+			}
 		</div>
 
 		{
 			recent.length === 0 ? (
 				<p class="dim empty">
-					还没有作品。到 <a href={url('/admin/')}>后台</a> 建第一篇，或在
-					<code>src/content/works/</code> 下新建文件夹。
+					还没有作品。到 <a href={url('/admin/')}>后台</a> 建第一篇。
 				</p>
 			) : (
-				years.map((g) => (
-					<div class="year-group">
-						<div class="year">{g.year}</div>
-						<ul class="stack">
-							{g.items.map((work) => (
-								<WorkCard work={work} />
-							))}
-						</ul>
-					</div>
-				))
+				<ul class="stack">
+					{recent.map((work) => (
+						<WorkCard work={work} />
+					))}
+				</ul>
 			)
 		}
 	</section>
@@ -57,16 +53,16 @@ const tags = (await getTagCounts()).slice(0, 24);
 			<section>
 				<div class="sec-head">
 					<h2>随笔</h2>
-					<a class="more" href={url('/essays/')}>
+					<a class="badge" href={url('/essays/')}>
 						全部
 					</a>
 				</div>
-				<ul class="rows">
+				<ul class="stack">
 					{essays.map((e) => (
 						<li>
-							<a href={url(`/essays/${e.id}/`)}>
-								<span class="rt">{e.data.title}</span>
-								<span class="rd">
+							<a class="card compact" href={url(`/essays/${e.id}/`)}>
+								<span class="ct">{e.data.title}</span>
+								<span class="cd">
 									<FormattedDate date={e.data.pubDate} />
 								</span>
 							</a>
@@ -81,158 +77,80 @@ const tags = (await getTagCounts()).slice(0, 24);
 		tags.length > 0 && (
 			<section>
 				<h2>标签</h2>
-				<p class="tag-cloud">
+				<ul class="meta-row">
 					{tags.map((t) => (
-						<a href={url(`/tags/${encodeURIComponent(t.tag)}/`)}>
-							{t.tag}
-							<span class="n">{t.count}</span>
-						</a>
+						<li>
+							<a class="badge" href={url(`/tags/${encodeURIComponent(t.tag)}/`)}>
+								{t.tag}
+								<span class="n">{t.count}</span>
+							</a>
+						</li>
 					))}
-				</p>
+				</ul>
 			</section>
 		)
 	}
 </Base>
 
 <style>
-	/* ── 首页题头：大标题 + 右侧竖排引言 ─────────────────── */
 	.hero {
-		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		gap: 3rem;
-		padding: 1.5rem 0 4rem;
-	}
-	.hero-text {
-		min-width: 0;
+		padding: 2.5rem 0 3rem;
 	}
 	.hero h1 {
-		font-size: clamp(2.4rem, 7vw, 3.6rem);
-		margin: 0 0 0.5rem;
-		letter-spacing: 0.02em;
+		font-size: clamp(2.2rem, 7vw, 3.2rem);
+		line-height: 1.25;
+		margin: 0 0 0.6rem;
+		/* 渐变文字需要一点内边距，否则右侧字形会被裁掉 */
+		padding-right: 0.1em;
 	}
 	.hero p {
 		margin: 0;
 		color: var(--text-muted);
-		font-family: var(--font-serif);
-		font-size: 1.05rem;
-	}
-	.quote {
-		writing-mode: vertical-rl;
-		font-family: var(--font-serif);
-		font-size: 0.9rem;
-		letter-spacing: 0.3em;
-		color: var(--text-faint);
-		padding: 0.25rem 0 0.25rem 1.4rem;
-		border-left: 1px solid var(--rule);
-		flex: 0 0 auto;
+		font-size: 1.02rem;
 	}
 
 	section {
-		margin-bottom: 4.5rem;
+		margin-bottom: 3.5rem;
 	}
 	.sec-head {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: 1rem;
-		margin-bottom: 0.5rem;
+		margin-bottom: 1rem;
 	}
 	.sec-head h2 {
 		margin: 0;
-	}
-	.more {
-		font-family: var(--font-sans);
-		font-size: 0.82rem;
-		color: var(--text-muted);
-		text-decoration: none;
-		white-space: nowrap;
-	}
-	.more:hover {
-		color: var(--accent);
+		font-size: 1.15rem;
 	}
 	.empty {
-		padding-top: 1rem;
+		padding-top: 0.5rem;
 	}
 
-	/* ── 年份归档：年份作为浅色标记浮在列表左上 ──────────── */
-	.year-group + .year-group {
-		margin-top: 2.5rem;
-	}
-	.year {
-		font-family: var(--font-serif);
-		font-size: 0.95rem;
-		color: var(--text-faint);
-		letter-spacing: 0.15em;
-		margin-bottom: 0.4rem;
-	}
-
-	/* ── 随笔紧凑行 ─────────────────────────────────────── */
-	.rows {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		border-top: 1px solid var(--rule);
-	}
-	.rows a {
+	/* 随笔用扁一点的卡片 */
+	.compact {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
-		gap: 1.5rem;
-		padding: 0.85rem 0;
-		border-bottom: 1px solid var(--rule);
-		text-decoration: none;
-		transition: padding-left 0.18s ease;
+		gap: 1.25rem;
+		padding: 1rem 1.4rem;
 	}
-	.rows a:hover {
-		padding-left: 0.5rem;
-	}
-	.rt {
-		font-family: var(--font-serif);
-		font-size: 1.02rem;
+	.ct {
+		font-size: 1rem;
 		color: var(--text);
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.rows a:hover .rt {
-		color: var(--accent);
-	}
-	.rd {
+	.cd {
 		flex: 0 0 auto;
 		font-size: 0.78rem;
 		color: var(--text-faint);
 	}
-
-	/* ── 标签云：文字链接，不用胶囊 ─────────────────────── */
-	.tag-cloud {
-		margin: 0;
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.4rem;
-	}
-	.tag-cloud a {
-		font-size: 0.92rem;
-		color: var(--text-muted);
-		text-decoration: none;
-	}
-	.tag-cloud a:hover {
-		color: var(--accent);
-	}
-	.tag-cloud .n {
+	.n {
+		margin-left: 0.35em;
 		font-size: 0.72rem;
 		color: var(--text-faint);
-		margin-left: 0.25em;
-		vertical-align: super;
-	}
-
-	@media (max-width: 900px) {
-		.quote {
-			display: none;
-		}
-		.hero {
-			padding-bottom: 3rem;
-		}
 	}
 </style>

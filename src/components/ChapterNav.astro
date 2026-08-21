@@ -15,19 +15,18 @@ const { workId, prev, next } = Astro.props;
 	<div class="side">
 		{
 			prev && (
-				<a href={url(`/works/${workId}/${chapterSlugOf(prev)}/`)}>
-					<span class="lbl">上一章</span>
+				<a class="card" href={url(`/works/${workId}/${chapterSlugOf(prev)}/`)}>
+					<span class="lbl">← 上一章</span>
 					<span class="t">{prev.data.title}</span>
 				</a>
 			)
 		}
 	</div>
-	<a class="toc" href={url(`/works/${workId}/`)}>目录</a>
 	<div class="side right">
 		{
 			next && (
-				<a href={url(`/works/${workId}/${chapterSlugOf(next)}/`)}>
-					<span class="lbl">下一章</span>
+				<a class="card" href={url(`/works/${workId}/${chapterSlugOf(next)}/`)}>
+					<span class="lbl">下一章 →</span>
 					<span class="t">{next.data.title}</span>
 				</a>
 			)
@@ -35,52 +34,54 @@ const { workId, prev, next } = Astro.props;
 	</div>
 </nav>
 
+<a class="toc badge" href={url(`/works/${workId}/`)}>返回目录</a>
+
 <style>
 	.chapter-nav {
 		display: flex;
-		align-items: flex-start;
-		gap: 1.5rem;
-		margin-top: 4rem;
-		padding-top: 1.75rem;
-		border-top: 1px solid var(--rule);
+		gap: 0.75rem;
+		margin-top: 3rem;
 	}
 	.side {
 		flex: 1;
 		min-width: 0;
+		display: flex;
 	}
 	.side.right {
-		text-align: right;
+		justify-content: flex-end;
 	}
-	.side a {
+	.side .card {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		gap: 0.2rem;
-		text-decoration: none;
+		padding: 0.9rem 1.2rem;
+	}
+	.side.right .card {
+		text-align: right;
 	}
 	.lbl {
 		font-size: 0.74rem;
-		letter-spacing: 0.1em;
 		color: var(--text-faint);
 	}
 	.t {
-		font-family: var(--font-serif);
-		font-size: 0.98rem;
+		font-size: 0.95rem;
 		color: var(--text);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
-	.side a:hover .t {
-		color: var(--accent);
-	}
 	.toc {
-		flex: 0 0 auto;
-		align-self: center;
-		font-size: 0.85rem;
-		color: var(--text-muted);
-		text-decoration: none;
+		display: block;
+		width: fit-content;
+		margin: 1rem auto 0;
 	}
-	.toc:hover {
-		color: var(--accent);
+	@media (max-width: 560px) {
+		.chapter-nav {
+			flex-direction: column;
+		}
+		.side.right .card {
+			text-align: left;
+		}
 	}
 </style>

@@ -13,31 +13,28 @@ const year = new Date().getFullYear();
 			</span>
 		</p>
 		<div class="links">
-			{SOCIAL.map((s) => <a href={s.href} rel="me">{s.label}</a>)}
-			<a href={url('/rss.xml')}>RSS</a>
+			{SOCIAL.map((s) => <a class="badge" href={s.href} rel="me">{s.label}</a>)}
+			<a class="badge" href={url('/rss.xml')}>RSS</a>
 		</div>
 	</div>
 </footer>
 
 <style>
-	footer {
-		border-top: 1px solid var(--rule);
-	}
 	.inner {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 1rem 2rem;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: space-between;
 		max-width: var(--page-width);
 		margin: 0 auto;
-		padding: 2.5rem 1.5rem 3.5rem;
+		padding: 2rem 1.25rem 3rem;
 	}
 	p {
 		margin: 0;
 		font-size: 0.85rem;
 		color: var(--text-muted);
-		line-height: 1.9;
+		line-height: 1.8;
 	}
 	.fine {
 		color: var(--text-faint);
@@ -45,14 +42,6 @@ const year = new Date().getFullYear();
 	}
 	.links {
 		display: flex;
-		gap: 1.25rem;
-		font-size: 0.85rem;
-	}
-	.links a {
-		color: var(--text-muted);
-		text-decoration: none;
-	}
-	.links a:hover {
-		color: var(--accent);
+		gap: 0.5rem;
 	}
 </style>

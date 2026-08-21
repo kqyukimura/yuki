@@ -35,9 +35,15 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 		{
 			tags.length > 0 && (
 				<footer class="tags">
-					{tags.map((t) => (
-						<a href={url(`/tags/${encodeURIComponent(t)}/`)}>{t}</a>
-					))}
+					<ul class="meta-row">
+						{tags.map((t) => (
+							<li>
+								<a class="badge" href={url(`/tags/${encodeURIComponent(t)}/`)}>
+									{t}
+								</a>
+							</li>
+						))}
+					</ul>
 				</footer>
 			)
 		}
@@ -46,10 +52,10 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 
 <style>
 	.head {
-		margin-bottom: 2.5rem;
+		margin-bottom: 1.75rem;
 	}
 	.head h1 {
-		margin-bottom: 0.6rem;
+		margin-bottom: 0.5rem;
 	}
 	.meta {
 		margin: 0;
@@ -60,22 +66,13 @@ const { title, description, pubDate, updatedDate, heroImage, tags } = essay.data
 		display: block;
 		width: 100%;
 		height: auto;
-		margin-bottom: 2.5rem;
+		border-radius: var(--r-xl);
+		margin-bottom: 1.75rem;
 	}
 	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.3rem;
-		margin-top: 4rem;
-		padding-top: 1.5rem;
-		border-top: 1px solid var(--rule);
+		margin-top: 3rem;
 	}
-	.tags a {
-		font-size: 0.88rem;
-		color: var(--text-muted);
-		text-decoration: none;
-	}
-	.tags a:hover {
-		color: var(--accent);
+	.tags .meta-row {
+		margin: 0;
 	}
 </style>

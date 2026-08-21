@@ -32,7 +32,7 @@ const Tag = linked ? 'a' : 'span';
 	}
 	{relationships.map((cp) => <li><span class="badge">{cp}</span></li>)}
 	<li>
-		<span class="dim">
+		<span class="badge is-plain">
 			{stats.isOneshot ? '短篇' : `共 ${stats.chapterCount} 章`} · {formatWords(stats.wordCount)}
 		</span>
 	</li>

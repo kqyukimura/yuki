@@ -1,0 +1,36 @@
+---
+/**
+ * 线性图标集。24×24 线框，跟随 currentColor。
+ * 加新图标就在 PATHS 里加一条。
+ */
+interface Props {
+	name: string;
+	size?: number;
+}
+const { name, size = 24 } = Astro.props;
+
+const PATHS: Record<string, string> = {
+	home: 'M3 10.7 12 3.5l9 7.2V20a1.5 1.5 0 0 1-1.5 1.5H15V15H9v6.5H4.5A1.5 1.5 0 0 1 3 20z',
+	book: 'M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5H6.5A2.5 2.5 0 0 0 4 21zM20 18.5v3H6.5',
+	pen: 'M12 20.5h9M16.4 3.6a2.12 2.12 0 0 1 3 3L7.5 18.5l-4 1 1-4z',
+	user: 'M20 21.5v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11.5a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+	sun: 'M12 16.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4',
+	moon: 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z',
+};
+
+const d = PATHS[name] ?? '';
+---
+
+<svg
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="none"
+	stroke="currentColor"
+	stroke-width="1.7"
+	stroke-linecap="round"
+	stroke-linejoin="round"
+	aria-hidden="true"
+>
+	<path d={d}></path>
+</svg>

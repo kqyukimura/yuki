@@ -1,0 +1,79 @@
+---
+import { NAV } from '../consts';
+import { url } from '../lib/url';
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname;
+const home = url('/');
+const isActive = (href: string) => {
+	const target = url(href);
+	return target === home ? path === home : path.startsWith(target);
+};
+---
+
+{/* 只在手机端出现，桌面端用顶部 pill 导航 */}
+<nav class="bottom-nav" aria-label="主导航">
+	{
+		NAV.map((item) => (
+			<a href={url(item.href)} class:list={[{ active: isActive(item.href) }]}>
+				<span class="ind">
+					<Icon name={item.icon} size={22} />
+				</span>
+				<span class="lbl">{item.label}</span>
+			</a>
+		))
+	}
+</nav>
+
+<style>
+	.bottom-nav {
+		display: none;
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 30;
+		background: color-mix(in srgb, var(--surface) 92%, transparent);
+		backdrop-filter: blur(16px);
+		padding-bottom: env(safe-area-inset-bottom, 0px);
+	}
+	.bottom-nav a {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.15rem;
+		padding: 0.6rem 0 0.55rem;
+		color: var(--text-muted);
+		text-decoration: none;
+	}
+	/* 选中项的图标外包一颗药丸，这是 Material 3 底栏的标志做法 */
+	.ind {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 3.5rem;
+		height: 1.9rem;
+		border-radius: var(--r-pill);
+		transition: background 0.18s ease;
+	}
+	.lbl {
+		font-size: 0.7rem;
+		line-height: 1.4;
+	}
+	.bottom-nav a.active {
+		color: var(--accent);
+	}
+	.bottom-nav a.active .ind {
+		background: var(--accent-soft);
+	}
+	.bottom-nav a.active .lbl {
+		font-weight: 500;
+	}
+
+	@media (max-width: 720px) {
+		.bottom-nav {
+			display: flex;
+		}
+	}
+</style>

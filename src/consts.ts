@@ -6,18 +6,21 @@
 export const SITE_TITLE = 'yuki';
 /** 站点简介，用于首页副标题、RSS、搜索结果摘要 */
 export const SITE_DESCRIPTION = '存放我写的同人与随笔。';
-/** 首页竖排引言。留空字符串就不显示。手机上会自动隐藏 */
+/** 首页大标题下的一句话。留空字符串就不显示 */
 export const SITE_QUOTE = '把写下来的都留在这里';
 
 /** 你的笔名，显示在页脚 */
 export const AUTHOR = '晏茶殊';
 
-/** 页头导航。href 写成不带 base 的站内路径，渲染时会自动加前缀。 */
+/**
+ * 导航。href 写成不带 base 的站内路径，渲染时会自动加前缀。
+ * icon 对应 src/components/Icon.astro 里的图形，手机底栏会用到。
+ */
 export const NAV = [
-	{ href: '/', label: '首页' },
-	{ href: '/works/', label: '作品' },
-	{ href: '/essays/', label: '随笔' },
-	{ href: '/about/', label: '关于' },
+	{ href: '/', label: '首页', icon: 'home' },
+	{ href: '/works/', label: '作品', icon: 'book' },
+	{ href: '/essays/', label: '随笔', icon: 'pen' },
+	{ href: '/about/', label: '关于', icon: 'user' },
 ];
 
 /**

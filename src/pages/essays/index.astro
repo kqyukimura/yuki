@@ -22,7 +22,7 @@ const years = groupByYear(essays);
 		) : (
 			years.map((g) => (
 				<section class="year-group">
-					<div class="year">{g.year}</div>
+					<h2 class="year">{g.year}</h2>
 					<ul class="stack">
 						{g.items.map((e) => (
 							<li>
@@ -30,10 +30,14 @@ const years = groupByYear(essays);
 									<h3>{e.data.title}</h3>
 									<ul class="meta-row">
 										<li>
-											<FormattedDate date={e.data.pubDate} />
+											<span class="badge is-plain">
+												<FormattedDate date={e.data.pubDate} />
+											</span>
 										</li>
 										{e.data.tags.slice(0, 3).map((t) => (
-											<li>{t}</li>
+											<li>
+												<span class="badge">{t}</span>
+											</li>
 										))}
 									</ul>
 									<p>{e.data.description}</p>
@@ -49,22 +53,22 @@ const years = groupByYear(essays);
 
 <style>
 	.page-head {
-		padding-bottom: 2.5rem;
+		padding: 1rem 0 2rem;
 	}
 	.page-head h1 {
-		margin-bottom: 0.3rem;
+		margin-bottom: 0.25rem;
 	}
 	.page-head .dim {
 		margin: 0;
 	}
 	.year-group + .year-group {
-		margin-top: 3rem;
+		margin-top: 2.5rem;
 	}
 	.year {
-		font-family: var(--font-serif);
-		font-size: 0.95rem;
+		margin: 0 0 0.9rem;
+		font-size: 0.85rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
 		color: var(--text-faint);
-		letter-spacing: 0.15em;
-		margin-bottom: 0.4rem;
 	}
 </style>

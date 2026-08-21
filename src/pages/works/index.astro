@@ -2,12 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import WorkCard from '../../components/WorkCard.astro';
 import { url } from '../../lib/url';
-import {
-	getWorksWithStats,
-	getFandomCounts,
-	formatWords,
-	groupByYear,
-} from '../../lib/works';
+import { getWorksWithStats, getFandomCounts, formatWords, groupByYear } from '../../lib/works';
 
 const works = await getWorksWithStats();
 const fandoms = await getFandomCounts();
@@ -21,14 +16,16 @@ const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
 		<p class="dim">共 {works.length} 篇 · {formatWords(totalWords)}</p>
 		{
 			fandoms.length > 1 && (
-				<p class="fandoms">
+				<ul class="meta-row filters">
 					{fandoms.map((f) => (
-						<a href={url(`/fandoms/${encodeURIComponent(f.fandom)}/`)}>
-							{f.fandom}
-							<span class="n">{f.count}</span>
-						</a>
+						<li>
+							<a class="badge" href={url(`/fandoms/${encodeURIComponent(f.fandom)}/`)}>
+								{f.fandom}
+								<span class="n">{f.count}</span>
+							</a>
+						</li>
 					))}
-				</p>
+				</ul>
 			)
 		}
 	</header>
@@ -41,7 +38,7 @@ const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
 		) : (
 			years.map((g) => (
 				<section class="year-group">
-					<div class="year">{g.year}</div>
+					<h2 class="year">{g.year}</h2>
 					<ul class="stack">
 						{g.items.map((work) => (
 							<WorkCard work={work} />
@@ -55,42 +52,31 @@ const totalWords = works.reduce((s, w) => s + w.stats.wordCount, 0);
 
 <style>
 	.page-head {
-		padding-bottom: 2.5rem;
+		padding: 1rem 0 2rem;
 	}
 	.page-head h1 {
-		margin-bottom: 0.3rem;
+		margin-bottom: 0.25rem;
 	}
 	.page-head .dim {
 		margin: 0;
 	}
-	.fandoms {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem 1.3rem;
-		margin: 1.25rem 0 0;
+	.filters {
+		margin-top: 1.1rem;
+		margin-bottom: 0;
 	}
-	.fandoms a {
-		font-size: 0.9rem;
-		color: var(--text-muted);
-		text-decoration: none;
-	}
-	.fandoms a:hover {
-		color: var(--accent);
-	}
-	.fandoms .n {
+	.n {
+		margin-left: 0.35em;
 		font-size: 0.72rem;
 		color: var(--text-faint);
-		margin-left: 0.25em;
-		vertical-align: super;
 	}
 	.year-group + .year-group {
-		margin-top: 3rem;
+		margin-top: 2.5rem;
 	}
 	.year {
-		font-family: var(--font-serif);
-		font-size: 0.95rem;
+		margin: 0 0 0.9rem;
+		font-size: 0.85rem;
+		font-weight: 500;
+		letter-spacing: 0.08em;
 		color: var(--text-faint);
-		letter-spacing: 0.15em;
-		margin-bottom: 0.4rem;
 	}
 </style>

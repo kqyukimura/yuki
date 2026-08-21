@@ -11,6 +11,76 @@
 			默认的 /admin/config.yml 会指错地方，所以用相对路径。
 		-->
 		<link href="./config.yml" type="text/yaml" rel="cms-config-url" />
+
+		<style>
+			/* ═══════════════════════════════════════════════════
+			   后台主题覆盖
+			   Sveltia 用一套 --sui-* 设计令牌，且没有 Shadow DOM，
+			   所以可以直接覆盖变量来改主题——比硬改内部类名稳，
+			   升级后不容易失效。
+
+			   为什么要 !important：Sveltia 的样式是运行时注入到
+			   <head> 的，排在这个静态 <style> 之后，同优先级下它会赢。
+			   背景色按主题分块写，避免把浅色值灌进深色模式。
+			   ═══════════════════════════════════════════════════ */
+			:root {
+				/* 默认字体栈里没有任何中文字体，中文只能掉到系统默认。
+				   补上 CJK 栈，让后台里的中文和站点前台一致。 */
+				--sui-font-family-default: 'Google Sans', 'Source Sans 3', system-ui,
+					-apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+					'Source Han Sans SC', 'Noto Sans CJK SC', sans-serif !important;
+				--sui-control-font-family: var(--sui-font-family-default) !important;
+				--sui-heading-font-family: var(--sui-font-family-default) !important;
+				--sui-textbox-font-family: var(--sui-font-family-default) !important;
+
+				/* 色相 229 对应站点强调色 #4F6BED。
+				   这一个变量会驱动强调色、边框、聚焦环一起重算。 */
+				--sui-base-hue: 229 !important;
+
+				/* 圆角：按钮做成药丸，输入控件加大到 12–14px，
+				   贴近站点前台的 Material 观感 */
+				--sui-button-small-border-radius: 999px !important;
+				--sui-button-medium-border-radius: 999px !important;
+				--sui-button-large-border-radius: 999px !important;
+				--sui-control-small-border-radius: 10px !important;
+				--sui-control-medium-border-radius: 12px !important;
+				--sui-control-large-border-radius: 14px !important;
+				--sui-textbox-border-radius: 12px !important;
+				--sui-listbox-border-radius: 14px !important;
+				--sui-option-border-radius: 10px !important;
+				--sui-tree-border-radius: 14px !important;
+				/* 侧栏栏目项做成药丸，和站点底栏的选中指示一致 */
+				--sui-tree-item-border-radius: 999px !important;
+				--sui-checkbox-border-radius: 5px !important;
+			}
+
+			/* 表面色：默认饱和度只有 5%/10%，偏灰。
+			   提高饱和度做出微蓝表面，亮度保持不变以免影响对比度。 */
+			html[data-theme='light'] {
+				--sui-background-color-1-hsl: 229 30% 100% !important;
+				--sui-background-color-2-hsl: 229 30% 98% !important;
+				--sui-background-color-3-hsl: 229 28% 95% !important;
+				--sui-background-color-4-hsl: 229 26% 92% !important;
+				--sui-background-color-5-hsl: 229 20% 84% !important;
+
+				/* 边框同样提饱和度，否则灰边压在微蓝表面上会显脏。
+				   其余边框色（按钮/输入框/树/列表）都从这三档派生。 */
+				--sui-border-color-1-hsl: 229 18% 60% !important;
+				--sui-border-color-2-hsl: 229 22% 86% !important;
+				--sui-border-color-3-hsl: 229 24% 90% !important;
+			}
+			html[data-theme='dark'] {
+				--sui-background-color-1-hsl: 229 14% 8% !important;
+				--sui-background-color-2-hsl: 229 14% 10% !important;
+				--sui-background-color-3-hsl: 229 13% 13% !important;
+				--sui-background-color-4-hsl: 229 12% 16% !important;
+				--sui-background-color-5-hsl: 229 12% 26% !important;
+
+				--sui-border-color-1-hsl: 229 12% 40% !important;
+				--sui-border-color-2-hsl: 229 12% 24% !important;
+				--sui-border-color-3-hsl: 229 12% 20% !important;
+			}
+		</style>
 	</head>
 	<body>
 		<!-- jsDelivr 在国内比 unpkg 稳定 -->
